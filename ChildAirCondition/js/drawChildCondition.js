@@ -2,17 +2,28 @@ var canvas = document.getElementById('child-condition');
 // 空调外壳画布
 var AirConditionBox = canvas.getContext('2d');
 AirConditionBox.fillStyle = '#FF0000';
-AirConditionBox.fillRect(0,0,1200,800);
+AirConditionBox.fillRect(0, 0, 1200, 800);
 
 // 空调显示屏
 var AirConditionScreen = canvas.getContext('2d');
 AirConditionScreen.fillStyle = '#8F8FB2';
-AirConditionScreen.fillRect(10,10,220,100);
+AirConditionScreen.fillRect(10, 10, 220, 100);
+
+// 温度显示
+var TempWord = canvas.getContext('2d');
+TempWord.fillStyle = '#000000';
+TempWord.font = '10px Arial';
+TempWord.fillText('制冷温度：25 ℃      缺省温度：25 ℃', 20, 25);
+
+var WindWord = canvas.getContext('2d');
+WindWord.fillStyle = '#000000';
+WindWord.font = '10px Arial';
+WindWord.fillText('风速：低        缺省风速：低', 20, 45);
 
 // 空调风速设置
 var WindBox = canvas.getContext('2d');
-WindBox.fillsyle = '#66FF66';
-WindBox.fillRect(240,10,40,40);
+WindBox.fillStyle = '#66FF66';
+WindBox.fillRect(240, 10, 40, 40);
 var WindUpImg = document.createElement('img');
 var WindUp = canvas.getContext('2d');
 WindUpImg.src = 'asset/up.png';
@@ -56,5 +67,5 @@ var CheckInImg = document.createElement('img');
 var CheckIn = canvas.getContext('2d');
 CheckInImg.src = 'asset/checkin.png';
 CheckInImg.onload = function () {
-    Switch.drawImage(CheckInImg, 0, 0, 64, 64, 10, 110, 38, 38);
+    Switch.drawImage(CheckInImg, 0, 0, 64, 64, 10, 115, 38, 30);
 }
