@@ -3,12 +3,18 @@
  *
  * @file 从控机
  */
+var WindDescrib = ['低', '中', '高'];
+
 var canvas = document.getElementById('child-condition');
 canvas.width = 1200;
 canvas.height = 800;
 
 // 空调外壳画布
 var AirConditionBox = canvas.getContext('2d');
+AirConditionBox.defaultTemp = 25;
+AirConditionBox.defaultWind = 0;
+AirConditionBox.curTemp;
+AirConditionBox.curWind;
 AirConditionBox.fillStyle = '#FF0000';
 AirConditionBox.fillRect(0, 0, 1200, 800);
 
@@ -25,7 +31,7 @@ var WindWord = canvas.getContext('2d');
 
 // 空调风速设置
 var WindBox = canvas.getContext('2d');
-WindBox.fillStyle = '#66FF66';
+WindBox.fillStyle = '#000000';
 WindBox.fillRect(980, 50, 120, 120);
 var WindUpImg = document.createElement('img');
 var WindUp = canvas.getContext('2d');
@@ -42,7 +48,7 @@ WindDownImg.onload = function () {
 
 // 温度调节设置
 var TempBox = canvas.getContext('2d');
-TempBox.fillStyle = '#66FF66';
+TempBox.fillStyle = '#000000';
 TempBox.fillRect(980, 200, 120, 120);
 var TempUpImg = document.createElement('img');
 var TempUp = canvas.getContext('2d');
@@ -79,7 +85,6 @@ canvas.onclick = function (event) {
     var y = event.pageY - canvas.offsetTop;
     // 开关机
     if (x >= 1000 && y >= 650 && x <= 1128 && y <= 778) {
-        debugger;
         if (Switch.isOpen) {
             AirConditionScreen.shut();
             Switch.isOpen = false;
@@ -89,22 +94,49 @@ canvas.onclick = function (event) {
             Switch.isOpen = true;
         }
     }
+    else if (x >= 1110 && y >= 50 && x <= 1174 && y <= 114) {
+        var t = AirConditionBox.curTemp || AirConditionBox.defaultTemp;
+    }
 };
 
 AirConditionScreen.show = function () {
+    var t = AirConditionBox.defaultTemp;
+    var w = AirConditionBox.defaultWind;
     AirConditionScreen.fillStyle = '#66FF66';
     AirConditionScreen.fillRect(50, 50, 900, 600);
+    WindBox.fillRect(980, 50, 120, 120);
+    TempBox.fillRect(980, 200, 120, 120);
+
     // 温度显示
     TempWord.fillStyle = '#000000';
     TempWord.font = '40px Arial';
-    TempWord.fillText('制冷温度：25 ℃      缺省温度：25 ℃', 65, 90);
+    var str = '制冷温度：'
+            + t
+            + ' ℃      缺省温度：'
+            + t
+            + '℃';
+    TempWord.fillText(str, 65, 90);
     // 风速显示
     WindWord.fillStyle = '#000000';
     WindWord.font = '40px Arial';
-    WindWord.fillText('风速：低        缺省风速：低', 65, 140);
+    str = '风速：'
+            + WindDescrib[w]
+            + '      缺省风速：'
+            + WindDescrib[w];
+    WindWord.fillText(str, 65, 140);
+    // 调节窗口显示
+    WindBox.fillStyle = '#000000';
+    WindBox.font = '40px Arial';
+    WindBox.fillText(WindDescrib[w], 1020, 125);
+    str = t
+        + '℃';
+    TempBox.fillText(str, 1000, 270);
 };
 
 AirConditionScreen.shut = function () {
     AirConditionScreen.fillStyle = '#000000';
     AirConditionScreen.fillRect(50, 50, 900, 600);
+    WindBox.fillRect(980, 50, 120, 120);
+    TempBox.fillRect(980, 200, 120, 120);
 };
+
