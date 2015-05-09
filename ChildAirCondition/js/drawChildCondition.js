@@ -32,6 +32,8 @@ var TempBox = {
     y: 200,
     width: 120,
     height: 120,
+    wordX: 1000,
+    wordY: 270,
     PictureWidth: 64,
     PictureHeight: 64
 };
@@ -66,6 +68,8 @@ var WindBox = {
     y: 50,
     width: 120,
     height: 120,
+    wordX: 1020,
+    wordY: 124,
     fillOnStyle: '#66FF66',
     fillShutStyle: '#000000'
 };
@@ -223,10 +227,10 @@ AirConditionScreen.show = function () {
     // 调节窗口显示
     AirCondition.fillStyle = WindWord.fillStyle;
     AirCondition.font = WindWord.font;
-    AirCondition.fillText(WindDescrib[w], 1020, 125);
+    AirCondition.fillText(WindDescrib[w], WindBox.wordX, WindBox.wordY);
     str = t
         + '℃';
-    AirCondition.fillText(str, 1000, 270);
+    AirCondition.fillText(str, TempBox.wordX, TempBox.wordY);
 };
 
 AirConditionScreen.shut = function () {
