@@ -35,7 +35,9 @@ var TempBox = {
     wordX: 1000,
     wordY: 270,
     PictureWidth: 64,
-    PictureHeight: 64
+    PictureHeight: 64,
+    fillOnStyle: '#66FF66',
+    fillShutStyle: '#000000'
 };
 
 var TempWord = {
@@ -70,6 +72,8 @@ var WindBox = {
     height: 120,
     wordX: 1020,
     wordY: 124,
+    PictureWidth: 64,
+    PictureHeight: 64,
     fillOnStyle: '#66FF66',
     fillShutStyle: '#000000'
 };
@@ -190,34 +194,42 @@ canvas.onclick = function (event) {
         }
         else {
             AirConditionScreen.show();
+            TempBox.updateShow();
+            WindBox.updateShow();
             Switch.isOpen = true;
         }
+    }
+    else if (!Switch.isOpen) {
+        return;
     }
     else if (x >= WindUp.x && y >= WindUp.y && x <= WindUp.x + WindUp.width && y <= WindUp.y + WindUp.height) {
         if (AirCondition.curWind + 1 <= 2) {
             AirCondition.curWind += 1;
-            AirConditionScreen.show();
+            WindBox.updateShow();
         }
     }
     else if (x >= WindDown.x && y >= WindDown.y && x <= WindDown.x + WindDown.width
              && y <= WindDown.y + WindDown.height) {
         if (AirCondition.curWind - 1 >= 0) {
             AirCondition.curWind -= 1;
-            AirConditionScreen.show();
+            WindBox.updateShow();
         }
     }
     else if (x >= TempUp.x && y >= TempUp.y && x <= TempUp.x + TempUp.width && y <=  TempUp.y + TempUp.height) {
-        AirCondition.curTemp += 1;
-        AirConditionScreen.show();
+        if (AirCondition.curTemp + 1 <= 35) {
+            AirCondition.curTemp += 1;
+            TempBox.updateShow();
+        }
     }
     else if (x >= TempDown.x && y >= TempDown.y && x <= TempDown.x + TempDown.width
              && y <= TempDown.y + TempDown.height) {
-        AirCondition.curTemp -= 1;
-        AirConditionScreen.show();
+        if (AirCondition.curTemp - 1 >= 10) {
+            AirCondition.curTemp -= 1;
+            TempBox.updateShow();
+        }
     }
 };
 
-// 这里控制所有屏幕的显示
 AirConditionScreen.show = function () {
     var t = AirCondition.curTemp;
     var w = AirCondition.curWind;
@@ -244,13 +256,6 @@ AirConditionScreen.show = function () {
             + '      缺省风速：'
             + WindDescrib[w];
     AirCondition.fillText(str, WindWord.x, WindWord.y);
-    // 调节窗口显示
-    AirCondition.fillStyle = WindWord.fillStyle;
-    AirCondition.font = WindWord.font;
-    AirCondition.fillText(WindDescrib[w], WindBox.wordX, WindBox.wordY);
-    str = t
-        + '℃';
-    AirCondition.fillText(str, TempBox.wordX, TempBox.wordY);
 };
 
 AirConditionScreen.shut = function () {
@@ -259,5 +264,25 @@ AirConditionScreen.shut = function () {
                           AirConditionScreen.width, AirConditionScreen.height);
     AirCondition.fillRect(WindBox.x, WindBox.y, WindBox.width, WindBox.height);
     AirCondition.fillRect(TempBox.x, TempBox.y, TempBox.width, TempBox.height);
+};
+
+WindBox.updateShow = function () {
+    var w = AirCondition.curWind;
+    AirCondition.fillStyle = WindBox.fillOnStyle;
+    AirCondition.fillRect(WindBox.x, WindBox.y, WindBox.width, WindBox.height);
+    AirCondition.fillStyle = WindWord.fillStyle;
+    AirCondition.font = WindWord.font;
+    AirCondition.fillText(WindDescrib[w], WindBox.wordX, WindBox.wordY);
+};
+
+TempBox.updateShow = function () {
+    AirCondition.fillStyle = TempBox.fillOnStyle;
+    AirCondition.fillRect(TempBox.x, TempBox.y, TempBox.width, TempBox.height);
+    var t = AirCondition.curTemp;
+    AirCondition.fillStyle = TempWord.fillStyle;
+    AirCondition.font = TempWord.font;
+    var str = t
+        + '℃';
+    AirCondition.fillText(str, TempBox.wordX, TempBox.wordY);
 };
 
