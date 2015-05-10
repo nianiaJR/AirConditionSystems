@@ -189,23 +189,25 @@ AirCondition.init = function () {
         AirCondition.drawImage(SwitchImg, 0, 0, Switch.PictureWidth, Switch.PictureHeight,
                                Switch.x, Switch.y, Switch.width, Switch.height);
     };
-};
-
-// 费用查询
-var CheckInImg = document.createElement('img');
-CheckInImg.src = 'asset/checkin.png';
-CheckInImg.onload = function () {
-    AirCondition.drawImage(CheckInImg, 0, 0, CheckIn.PictureWidth, CheckIn.PictureHeight,
-                           CheckIn.x, CheckIn.y, CheckIn.width, CheckIn.height);
+    // 费用查询
+    var CheckInImg = document.createElement('img');
+    CheckInImg.src = 'asset/checkin.png';
+    CheckInImg.onload = function () {
+        AirCondition.drawImage(CheckInImg, 0, 0, CheckIn.PictureWidth, CheckIn.PictureHeight,
+                               CheckIn.x, CheckIn.y, CheckIn.width, CheckIn.height);
+    };
 };
 
 AirCondition.init();
 
-
-
 canvas.onclick = function (event) {
     var x = event.pageX - canvas.offsetLeft;
     var y = event.pageY - canvas.offsetTop;
+    xmlhttp.open('GET', 'http://localhost:4567/aircondition', true);
+    var params = {
+        curTemp: AirCondition.curTemp,
+        curWind: AirCondition.curWind
+    };
     // 开关机
     if (x >= Switch.x && y >= Switch.y && x <= Switch.x + Switch.width && y <= Switch.y + Switch.height) {
         if (Switch.isOpen) {
@@ -214,8 +216,8 @@ canvas.onclick = function (event) {
         }
         else {
             AirConditionScreen.show();
-            TempBox.updateShow();
-            WindBox.updateShow();
+            TempBox.updateShow(AirCondition.curTemp);
+            WindBox.updateShow(AirCondition.curWind);
             Switch.isOpen = true;
         }
     }
@@ -224,28 +226,28 @@ canvas.onclick = function (event) {
     }
     else if (x >= WindUp.x && y >= WindUp.y && x <= WindUp.x + WindUp.width && y <= WindUp.y + WindUp.height) {
         if (AirCondition.curWind + 1 <= 2) {
+            WindBox.updateShow(AirCondition.curWind + 1);
             AirCondition.curWind += 1;
-            WindBox.updateShow();
         }
     }
     else if (x >= WindDown.x && y >= WindDown.y && x <= WindDown.x + WindDown.width
              && y <= WindDown.y + WindDown.height) {
         if (AirCondition.curWind - 1 >= 0) {
+            WindBox.updateShow(AirCondition.curWind - 1);
             AirCondition.curWind -= 1;
-            WindBox.updateShow();
         }
     }
     else if (x >= TempUp.x && y >= TempUp.y && x <= TempUp.x + TempUp.width && y <=  TempUp.y + TempUp.height) {
         if (AirCondition.curTemp + 1 <= 35) {
+            TempBox.updateShow(AirCondition.curTemp + 1);
             AirCondition.curTemp += 1;
-            TempBox.updateShow();
         }
     }
     else if (x >= TempDown.x && y >= TempDown.y && x <= TempDown.x + TempDown.width
              && y <= TempDown.y + TempDown.height) {
         if (AirCondition.curTemp - 1 >= 10) {
+            TempBox.updateShow(AirCondition.curTemp - 1);
             AirCondition.curTemp -= 1;
-            TempBox.updateShow();
         }
     }
 };
@@ -286,22 +288,20 @@ AirConditionScreen.shut = function () {
     AirCondition.fillRect(TempBox.x, TempBox.y, TempBox.width, TempBox.height);
 };
 
-WindBox.updateShow = function () {
-    var w = AirCondition.curWind;
+WindBox.updateShow = function (wind) {
     AirCondition.fillStyle = WindBox.fillOnStyle;
     AirCondition.fillRect(WindBox.x, WindBox.y, WindBox.width, WindBox.height);
     AirCondition.fillStyle = WindWord.fillStyle;
     AirCondition.font = WindWord.font;
-    AirCondition.fillText(WindDescrib[w], WindBox.wordX, WindBox.wordY);
+    AirCondition.fillText(WindDescrib[wind], WindBox.wordX, WindBox.wordY);
 };
 
-TempBox.updateShow = function () {
+TempBox.updateShow = function (temperature) {
     AirCondition.fillStyle = TempBox.fillOnStyle;
     AirCondition.fillRect(TempBox.x, TempBox.y, TempBox.width, TempBox.height);
-    var t = AirCondition.curTemp;
     AirCondition.fillStyle = TempWord.fillStyle;
     AirCondition.font = TempWord.font;
-    var str = t
+    var str = temperature
         + '℃';
     AirCondition.fillText(str, TempBox.wordX, TempBox.wordY);
 };
