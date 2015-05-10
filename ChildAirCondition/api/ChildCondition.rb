@@ -13,8 +13,8 @@ end
 
 get '/aircondition' do
     r = {
-        defaultTemp: '23',
-        defaultWind: '0'
+        defaultTemp: 23,
+        defaultWind: 0
     }
     r.to_json
 end

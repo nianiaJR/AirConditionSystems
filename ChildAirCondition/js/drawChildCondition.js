@@ -128,8 +128,9 @@ var CheckIn = {
 // 空调外壳画布
 var AirCondition = canvas.getContext('2d');
 
-// 空调初始化
+// 空调初始化, 初始化页面布局画布
 AirCondition.init = function () {
+    // 从后台获取缺省温度、风速
     xmlhttp.open('GET', 'http://localhost:4567/aircondition', true);
     xmlhttp.send();
     xmlhttp.onload = function (e) {
@@ -144,52 +145,50 @@ AirCondition.init = function () {
     AirCondition.fillStyle = AirConditionBox.fillStyle;
     AirCondition.fillRect(AirConditionBox.x, AirConditionBox.y,
                           AirConditionBox.width, AirConditionBox.height);
-};
-AirCondition.init();
+    // 空调显示屏
+    AirCondition.fillStyle = AirConditionScreen.fillShutStyle;
+    AirCondition.fillRect(AirConditionScreen.x, AirConditionScreen.y,
+                          AirConditionScreen.width, AirConditionScreen.height);
+    // 空调风速设置
+    AirCondition.fillStyle = WindBox.fillShutStyle;
+    AirCondition.fillRect(WindBox.x, WindBox.y, WindBox.width, WindBox.height);
+    var WindUpImg = document.createElement('img');
+    WindUpImg.src = 'asset/up.png';
+    WindUpImg.onload = function () {
+        AirCondition.drawImage(WindUpImg, 0, 0, WindUp.PictureWidth, WindUp.PictureHeight,
+                               WindUp.x, WindUp.y, WindUp.width, WindUp.height);
+    };
+    var WindDownImg = document.createElement('img');
+    WindDownImg.src = 'asset/down.png';
+    WindDownImg.onload = function () {
+        AirCondition.drawImage(WindDownImg, 0, 0, WindDown.PictureWidth, WindDown.PictureHeight,
+                               WindDown.x, WindDown.y, WindDown.width, WindDown.height);
+    };
 
-// 空调显示屏
-AirCondition.fillStyle = AirConditionScreen.fillShutStyle;
-AirCondition.fillRect(AirConditionScreen.x, AirConditionScreen.y, AirConditionScreen.width, AirConditionScreen.height);
+    // 温度调节设置
+    AirCondition.fillStyle = TempBox.fillShutStyle;
+    AirCondition.fillRect(TempBox.x, TempBox.y, TempBox.width, TempBox.height);
+    var TempUpImg = document.createElement('img');
+    TempUpImg.src = 'asset/up.png';
+    TempUpImg.onload = function () {
+        AirCondition.drawImage(TempUpImg, 0, 0, TempUp.PictureWidth, TempUp.PictureHeight,
+                               TempUp.x, TempUp.y, TempUp.width, TempUp.height);
+    };
+    var TempDownImg = document.createElement('img');
+    TempDownImg.src = 'asset/down.png';
+    TempDownImg.onload = function () {
+        AirCondition.drawImage(TempDownImg, 0, 0, TempDown.PictureWidth, TempDown.PictureHeight,
+                           TempDown.x, TempDown.y, TempDown.width, TempDown.height);
+    };
 
-// 空调风速设置
-AirCondition.fillStyle = WindBox.fillShutStyle;
-AirCondition.fillRect(WindBox.x, WindBox.y, WindBox.width, WindBox.height);
-var WindUpImg = document.createElement('img');
-WindUpImg.src = 'asset/up.png';
-WindUpImg.onload = function () {
-    AirCondition.drawImage(WindUpImg, 0, 0, WindUp.PictureWidth, WindUp.PictureHeight,
-                           WindUp.x, WindUp.y, WindUp.width, WindUp.height);
-};
-var WindDownImg = document.createElement('img');
-WindDownImg.src = 'asset/down.png';
-WindDownImg.onload = function () {
-    AirCondition.drawImage(WindDownImg, 0, 0, WindDown.PictureWidth, WindDown.PictureHeight,
-                           WindDown.x, WindDown.y, WindDown.width, WindDown.height);
-};
-
-// 温度调节设置
-AirCondition.fillStyle = TempBox.fillShutStyle;
-AirCondition.fillRect(TempBox.x, TempBox.y, TempBox.width, TempBox.height);
-var TempUpImg = document.createElement('img');
-TempUpImg.src = 'asset/up.png';
-TempUpImg.onload = function () {
-    AirCondition.drawImage(TempUpImg, 0, 0, TempUp.PictureWidth, TempUp.PictureHeight,
-                           TempUp.x, TempUp.y, TempUp.width, TempUp.height);
-};
-var TempDownImg = document.createElement('img');
-TempDownImg.src = 'asset/down.png';
-TempDownImg.onload = function () {
-    AirCondition.drawImage(TempDownImg, 0, 0, TempDown.PictureWidth, TempDown.PictureHeight,
-                       TempDown.x, TempDown.y, TempDown.width, TempDown.height);
-};
-
-// 开关
-var SwitchImg = document.createElement('img');
-Switch.isOpen = false;
-SwitchImg.src = 'asset/switch.png';
-SwitchImg.onload = function () {
-    AirCondition.drawImage(SwitchImg, 0, 0, Switch.PictureWidth, Switch.PictureHeight,
-                           Switch.x, Switch.y, Switch.width, Switch.height);
+    // 开关
+    var SwitchImg = document.createElement('img');
+    Switch.isOpen = false;
+    SwitchImg.src = 'asset/switch.png';
+    SwitchImg.onload = function () {
+        AirCondition.drawImage(SwitchImg, 0, 0, Switch.PictureWidth, Switch.PictureHeight,
+                               Switch.x, Switch.y, Switch.width, Switch.height);
+    };
 };
 
 // 费用查询
@@ -199,6 +198,9 @@ CheckInImg.onload = function () {
     AirCondition.drawImage(CheckInImg, 0, 0, CheckIn.PictureWidth, CheckIn.PictureHeight,
                            CheckIn.x, CheckIn.y, CheckIn.width, CheckIn.height);
 };
+
+AirCondition.init();
+
 
 
 canvas.onclick = function (event) {
