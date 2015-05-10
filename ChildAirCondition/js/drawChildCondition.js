@@ -203,7 +203,6 @@ AirCondition.init();
 canvas.onclick = function (event) {
     var x = event.pageX - canvas.offsetLeft;
     var y = event.pageY - canvas.offsetTop;
-    xmlhttp.open('GET', 'http://localhost:4567/aircondition', true);
     var params = {
         curTemp: AirCondition.curTemp,
         curWind: AirCondition.curWind
@@ -227,7 +226,19 @@ canvas.onclick = function (event) {
     else if (x >= WindUp.x && y >= WindUp.y && x <= WindUp.x + WindUp.width && y <= WindUp.y + WindUp.height) {
         if (AirCondition.curWind + 1 <= 2) {
             WindBox.updateShow(AirCondition.curWind + 1);
-            AirCondition.curWind += 1;
+            params.curWind = AirCondition.curWind + 1;
+            xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
+            xmlhttp.send(JSON.stringify(params));
+            xmlhttp.onload = function (e) {
+                var obj = JSON.parse(xmlhttp.responseText);
+                if (obj.isOk) {
+                    AirCondition.curWind += 1;
+                    AirConditionScreen.show();
+                }
+                else {
+                    WindBox.updateShow(AirCondition.curWind - 1);
+                }
+            };
         }
     }
     else if (x >= WindDown.x && y >= WindDown.y && x <= WindDown.x + WindDown.width
