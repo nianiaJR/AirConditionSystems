@@ -4,7 +4,10 @@
  * @file 从控机
  */
 var WindDescrib = ['低', '中', '高'];
-
+var xmlhttp = new XMLHttpRequest();
+xmlhttp.open('GET', 'http://localhost:4567/hi?xxx=1&test=22', true);
+xmlhttp.withCredentials = true;
+xmlhttp.send();
 var canvas = document.getElementById('child-condition');
 canvas.width = 1200;
 canvas.height = 800;
