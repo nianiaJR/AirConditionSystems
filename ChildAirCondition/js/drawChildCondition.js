@@ -121,8 +121,8 @@ var CheckIn = {
 var AirCondition = canvas.getContext('2d');
 AirCondition.defaultTemp = 25;
 AirCondition.defaultWind = 0;
-AirCondition.curTemp;
-AirCondition.curWind;
+AirCondition.curTemp = AirCondition.curTemp || AirCondition.defaultTemp;
+AirCondition.curWind = AirCondition.curWind || AirCondition.defaultWind;
 AirCondition.fillStyle = AirConditionBox.fillStyle;
 AirCondition.fillRect(AirConditionBox.x, AirConditionBox.y,  AirConditionBox.width, AirConditionBox.height);
 
@@ -194,13 +194,33 @@ canvas.onclick = function (event) {
         }
     }
     else if (x >= WindUp.x && y >= WindUp.y && x <= WindUp.x + WindUp.width && y <= WindUp.y + WindUp.height) {
-        var t = AirConditionBox.curTemp || AirConditionBox.defaultTemp;
+        if (AirCondition.curWind + 1 <= 2) {
+            AirCondition.curWind += 1;
+            AirConditionScreen.show();
+        }
+    }
+    else if (x >= WindDown.x && y >= WindDown.y && x <= WindDown.x + WindDown.width
+             && y <= WindDown.y + WindDown.height) {
+        if (AirCondition.curWind - 1 >= 0) {
+            AirCondition.curWind -= 1;
+            AirConditionScreen.show();
+        }
+    }
+    else if (x >= TempUp.x && y >= TempUp.y && x <= TempUp.x + TempUp.width && y <=  TempUp.y + TempUp.height) {
+        AirCondition.curTemp += 1;
+        AirConditionScreen.show();
+    }
+    else if (x >= TempDown.x && y >= TempDown.y && x <= TempDown.x + TempDown.width
+             && y <= TempDown.y + TempDown.height) {
+        AirCondition.curTemp -= 1;
+        AirConditionScreen.show();
     }
 };
 
+// 这里控制所有屏幕的显示
 AirConditionScreen.show = function () {
-    var t = AirCondition.defaultTemp;
-    var w = AirCondition.defaultWind;
+    var t = AirCondition.curTemp;
+    var w = AirCondition.curWind;
     AirCondition.fillStyle = AirConditionScreen.fillOnStyle;
     AirCondition.fillRect(AirConditionScreen.x, AirConditionScreen.y,
                           AirConditionScreen.width, AirConditionScreen.height);
