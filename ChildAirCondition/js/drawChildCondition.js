@@ -12,6 +12,7 @@ var canvas = document.getElementById('child-condition');
 canvas.width = 1200;
 canvas.height = 800;
 
+
 // 空调布局参数配置
 var AirConditionBox = {
     x: 0,
@@ -126,12 +127,25 @@ var CheckIn = {
 
 // 空调外壳画布
 var AirCondition = canvas.getContext('2d');
-AirCondition.defaultTemp = 25;
-AirCondition.defaultWind = 0;
-AirCondition.curTemp = AirCondition.curTemp || AirCondition.defaultTemp;
-AirCondition.curWind = AirCondition.curWind || AirCondition.defaultWind;
-AirCondition.fillStyle = AirConditionBox.fillStyle;
-AirCondition.fillRect(AirConditionBox.x, AirConditionBox.y,  AirConditionBox.width, AirConditionBox.height);
+
+// 空调初始化
+AirCondition.init = function () {
+    xmlhttp.open('GET', 'http://localhost:4567/aircondition', true);
+    xmlhttp.send();
+    xmlhttp.onload = function (e) {
+        if (xmlhttp.readyState === 4) {
+            var obj = JSON.parse(xmlhttp.responseText);
+            AirCondition.defaultTemp = obj.defaultTemp;
+            AirCondition.defaultWind = obj.defaultWind;
+            AirCondition.curTemp = AirCondition.curTemp || AirCondition.defaultTemp;
+            AirCondition.curWind = AirCondition.curWind || AirCondition.defaultWind;
+        }
+    };
+    AirCondition.fillStyle = AirConditionBox.fillStyle;
+    AirCondition.fillRect(AirConditionBox.x, AirConditionBox.y,
+                          AirConditionBox.width, AirConditionBox.height);
+};
+AirCondition.init();
 
 // 空调显示屏
 AirCondition.fillStyle = AirConditionScreen.fillShutStyle;
@@ -185,6 +199,7 @@ CheckInImg.onload = function () {
     AirCondition.drawImage(CheckInImg, 0, 0, CheckIn.PictureWidth, CheckIn.PictureHeight,
                            CheckIn.x, CheckIn.y, CheckIn.width, CheckIn.height);
 };
+
 
 canvas.onclick = function (event) {
     var x = event.pageX - canvas.offsetLeft;
