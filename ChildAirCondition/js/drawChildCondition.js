@@ -4,10 +4,6 @@
  * @file 从控机
  */
 var WindDescrib = ['低', '中', '高'];
-var xmlhttp = new XMLHttpRequest();
-xmlhttp.open('GET', 'http://localhost:4567/hi?xxx=1&test=22', true);
-xmlhttp.withCredentials = true;
-xmlhttp.send();
 var canvas = document.getElementById('child-condition');
 canvas.width = 1200;
 canvas.height = 800;
@@ -130,18 +126,6 @@ var AirCondition = canvas.getContext('2d');
 
 // 空调初始化, 初始化页面布局画布
 AirCondition.init = function () {
-    // 从后台获取缺省温度、风速
-    xmlhttp.open('GET', 'http://localhost:4567/aircondition', true);
-    xmlhttp.send();
-    xmlhttp.onload = function (e) {
-        if (xmlhttp.readyState === 4) {
-            var obj = JSON.parse(xmlhttp.responseText);
-            AirCondition.defaultTemp = obj.defaultTemp;
-            AirCondition.defaultWind = obj.defaultWind;
-            AirCondition.curTemp = AirCondition.curTemp || AirCondition.defaultTemp;
-            AirCondition.curWind = AirCondition.curWind || AirCondition.defaultWind;
-        }
-    };
     AirCondition.fillStyle = AirConditionBox.fillStyle;
     AirCondition.fillRect(AirConditionBox.x, AirConditionBox.y,
                           AirConditionBox.width, AirConditionBox.height);
@@ -207,6 +191,10 @@ canvas.onclick = function (event) {
         curTemp: AirCondition.curTemp,
         curWind: AirCondition.curWind
     };
+
+    // 按键触发http请求
+    var xmlhttp = new XMLHttpRequest();
+
     // 开关机
     if (x >= Switch.x && y >= Switch.y && x <= Switch.x + Switch.width && y <= Switch.y + Switch.height) {
         if (Switch.isOpen) {
@@ -214,10 +202,22 @@ canvas.onclick = function (event) {
             Switch.isOpen = false;
         }
         else {
-            AirConditionScreen.show();
-            TempBox.updateShow(AirCondition.curTemp);
-            WindBox.updateShow(AirCondition.curWind);
-            Switch.isOpen = true;
+            // 从后台获取缺省温度、风速
+            xmlhttp.open('GET', 'http://localhost:4567/aircondition', false);
+            xmlhttp.onload = function (e) {
+                if (xmlhttp.readyState === 4) {
+                    var obj = JSON.parse(xmlhttp.responseText);
+                    AirCondition.defaultTemp = obj.defaultTemp;
+                    AirCondition.defaultWind = obj.defaultWind;
+                    AirCondition.curTemp = AirCondition.curTemp || AirCondition.defaultTemp;
+                    AirCondition.curWind = AirCondition.curWind || AirCondition.defaultWind;
+                    AirConditionScreen.show();
+                    TempBox.updateShow(AirCondition.curTemp);
+                    WindBox.updateShow(AirCondition.curWind);
+                    Switch.isOpen = true;
+                }
+            };
+            xmlhttp.send();
         }
     }
     else if (!Switch.isOpen) {
@@ -228,7 +228,6 @@ canvas.onclick = function (event) {
             WindBox.updateShow(AirCondition.curWind + 1);
             params.curWind = AirCondition.curWind + 1;
             xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
-            xmlhttp.send(JSON.stringify(params));
             xmlhttp.onload = function (e) {
                 var obj = JSON.parse(xmlhttp.responseText);
                 if (obj.isOk) {
@@ -239,26 +238,61 @@ canvas.onclick = function (event) {
                     WindBox.updateShow(AirCondition.curWind - 1);
                 }
             };
+            xmlhttp.send(JSON.stringify(params));
         }
     }
     else if (x >= WindDown.x && y >= WindDown.y && x <= WindDown.x + WindDown.width
              && y <= WindDown.y + WindDown.height) {
         if (AirCondition.curWind - 1 >= 0) {
             WindBox.updateShow(AirCondition.curWind - 1);
-            AirCondition.curWind -= 1;
+            params.curWind = AirCondition.curWind + 1;
+            xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
+            xmlhttp.onload = function (e) {
+                var obj = JSON.parse(xmlhttp.responseText);
+                if (obj.isOk) {
+                    AirCondition.curWind -= 1;
+                    AirConditionScreen.show();
+                }
+                else {
+                    WindBox.updateShow(AirCondition.curWind + 1);
+                }
+            };
+            xmlhttp.send(JSON.stringify(params));
         }
     }
     else if (x >= TempUp.x && y >= TempUp.y && x <= TempUp.x + TempUp.width && y <=  TempUp.y + TempUp.height) {
         if (AirCondition.curTemp + 1 <= 35) {
             TempBox.updateShow(AirCondition.curTemp + 1);
-            AirCondition.curTemp += 1;
+            xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
+            xmlhttp.onload = function (e) {
+                var obj = JSON.parse(xmlhttp.responseText);
+                if (obj.isOk) {
+                    AirCondition.curTemp += 1;
+                    AirConditionScreen.show();
+                }
+                else {
+                    TempBox.updateShow(AirCondition.curWind - 1);
+                }
+            };
+            xmlhttp.send(JSON.stringify(params));
         }
     }
     else if (x >= TempDown.x && y >= TempDown.y && x <= TempDown.x + TempDown.width
              && y <= TempDown.y + TempDown.height) {
         if (AirCondition.curTemp - 1 >= 10) {
             TempBox.updateShow(AirCondition.curTemp - 1);
-            AirCondition.curTemp -= 1;
+            xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
+            xmlhttp.onload = function (e) {
+                var obj = JSON.parse(xmlhttp.responseText);
+                if (obj.isOk) {
+                    AirCondition.curTemp -= 1;
+                    AirConditionScreen.show();
+                }
+                else {
+                    TempBox.updateShow(AirCondition.curWind + 1);
+                }
+            };
+            xmlhttp.send(JSON.stringify(params));
         }
     }
 };
@@ -269,8 +303,6 @@ AirConditionScreen.show = function () {
     AirCondition.fillStyle = AirConditionScreen.fillOnStyle;
     AirCondition.fillRect(AirConditionScreen.x, AirConditionScreen.y,
                           AirConditionScreen.width, AirConditionScreen.height);
-    AirCondition.fillRect(WindBox.x, WindBox.y, WindBox.width, WindBox.height);
-    AirCondition.fillRect(TempBox.x, TempBox.y, TempBox.width, TempBox.height);
 
     // 温度显示
     AirCondition.fillStyle = TempWord.fillStyle;

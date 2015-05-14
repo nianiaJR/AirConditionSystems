@@ -18,3 +18,10 @@ get '/aircondition' do
     }
     r.to_json
 end
+
+post '/aircondition' do
+    r = {
+        isOk: true 
+    }
+    r.to_json
+end
