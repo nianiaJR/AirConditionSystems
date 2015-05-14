@@ -1,9 +1,24 @@
 require 'sinatra'
 require 'json'
+require 'mongo'
+include Mongo
 
 before do
     headers 'Access-Control-Allow-Origin' => 'http://localhost:8848',
             'Access-Control-Allow-Credentials' => 'true'
+    $mongo_client = MongoClient.new("localhost")
+    $db = $mongo_client.db('test')
+    coll = $db.collection("testCollection")
+    r = {
+        name: "mongoDB",
+        type: "database",
+        count: 1,
+        info: {
+            x: 203,
+            y: 102
+        }
+    }
+    coll.insert(r)
 end
 
 get '/hi' do

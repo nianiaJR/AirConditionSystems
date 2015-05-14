@@ -1,6 +1,11 @@
 GEM
   remote: https://ruby.taobao.org/
   specs:
+    bson (1.12.1)
+    bson_ext (1.12.1)
+      bson (~> 1.12.1)
+    mongo (1.12.1)
+      bson (= 1.12.1)
     rack (1.6.1)
     rack-protection (1.5.3)
       rack
@@ -14,4 +19,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  bson_ext
+  mongo
   sinatra
