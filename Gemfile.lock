@@ -4,6 +4,7 @@ GEM
     bson (1.12.1)
     bson_ext (1.12.1)
       bson (~> 1.12.1)
+    ip (0.3.1)
     mongo (1.12.1)
       bson (= 1.12.1)
     rack (1.6.1)
@@ -20,5 +21,6 @@ PLATFORMS
 
 DEPENDENCIES
   bson_ext
+  ip
   mongo
   sinatra

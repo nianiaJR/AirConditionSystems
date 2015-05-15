@@ -1,11 +1,12 @@
 require 'sinatra'
 require 'json'
 require 'mongo'
-include Mongo
+require 'socket'
 
 before do
     headers 'Access-Control-Allow-Origin' => 'http://localhost:8848',
             'Access-Control-Allow-Credentials' => 'true'
+    include Mongo
     $mongo_client = MongoClient.new("localhost")
     $db = $mongo_client.db('test')
     coll = $db.collection("testCollection")
@@ -19,6 +20,9 @@ before do
         }
     }
     coll.insert(r)
+    coll.find(name: "mongoDB").to_a.each do |e|
+        puts e,">>>>>>>>"
+    end
 end
 
 get '/hi' do
