@@ -2,11 +2,11 @@ require 'sinatra'
 require 'json'
 require 'mongo'
 require 'socket'
+include Mongo
 
 before do
     headers 'Access-Control-Allow-Origin' => 'http://localhost:8848',
             'Access-Control-Allow-Credentials' => 'true'
-    include Mongo
     $mongo_client = MongoClient.new("localhost")
     $db = $mongo_client.db('test')
     coll = $db.collection("testCollection")
@@ -25,9 +25,15 @@ before do
     end
 end
 
-get '/hi' do
-    "Hello World!"
+get '/test' do
     puts params,">>>>>>>>>>>>"
+    s = TCPSocket.new 'localhost', 2002
+
+    while line = s.gets # Read lines from socket
+      puts line         # and print them
+    end
+
+    s.close             # close socket when done
 end
 
 get '/aircondition' do
