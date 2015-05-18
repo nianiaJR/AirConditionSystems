@@ -6,8 +6,14 @@ include Mongo
 
 set :port, 9494
 
+def read_database(collection)
+    mongo_client = MongoClient.new('localhost')
+    db = mongo_client.db('test')
+    db.collection(collection).find().to_a
+end
+
 # 与从控机通信的服务器，专门处理从控机的请求
-def processRequest()
+def process_request()
     server = TCPServer.new 2000
     recv_length = 200
     loop do
@@ -15,10 +21,9 @@ def processRequest()
         request = client.recv(recv_length)
         request = JSON.parse request, symbolize_names: true
         case request[:requestTag]
+        # 初始参数请求
         when 0
-            mongo_client = MongoClient.new('localhost')
-            db = mongo_client.db('test')
-            coll = db.collection('AirConditionConfigure').find().to_a
+            coll = read_database 'AirConditionConfigure'
             config = coll[0] 
             if config.nil?
                 r = {
@@ -31,14 +36,16 @@ def processRequest()
                     status: 1
                 }
             end
-            client.puts r.to_json
+        when 1
+
         end
+        client.puts r.to_json
         client.close
     end    
 end
 
 # 新建一个线程，用于并行处理远程的从控机请求
-Thread.new{ processRequest() } 
+Thread.new{ process_request() } 
 
 get '/test' do
     puts ">>>>>>>>>>>>>"
