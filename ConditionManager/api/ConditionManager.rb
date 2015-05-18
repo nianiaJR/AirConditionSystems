@@ -6,6 +6,7 @@ include Mongo
 
 set :port, 9494
 
+# 与从控机通信的服务器，专门处理从控机的请求
 def processRequest()
     server = TCPServer.new 2000
     recv_length = 200
@@ -36,6 +37,7 @@ def processRequest()
     end    
 end
 
+# 新建一个线程，用于并行处理远程的从控机请求
 Thread.new{ processRequest() } 
 
 get '/test' do

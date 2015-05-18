@@ -235,7 +235,7 @@ canvas.onclick = function (event) {
             xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
             xmlhttp.onload = function (e) {
                 var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.isOk) {
+                if (obj.status) {
                     AirCondition.curWind += 1;
                     AirConditionScreen.show();
                 }
@@ -254,7 +254,7 @@ canvas.onclick = function (event) {
             xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
             xmlhttp.onload = function (e) {
                 var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.isOk) {
+                if (obj.status) {
                     AirCondition.curWind -= 1;
                     AirConditionScreen.show();
                 }
@@ -262,7 +262,7 @@ canvas.onclick = function (event) {
                     WindBox.updateShow(AirCondition.curWind + 1);
                 }
             };
-            xmlhttp.send(JSON.stringify(params));
+            xmlhttp.send(params);
         }
     }
     else if (x >= TempUp.x && y >= TempUp.y && x <= TempUp.x + TempUp.width && y <=  TempUp.y + TempUp.height) {
@@ -271,7 +271,7 @@ canvas.onclick = function (event) {
             xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
             xmlhttp.onload = function (e) {
                 var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.isOk) {
+                if (obj.status) {
                     AirCondition.curTemp += 1;
                     AirConditionScreen.show();
                 }
@@ -289,7 +289,7 @@ canvas.onclick = function (event) {
             xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
             xmlhttp.onload = function (e) {
                 var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.isOk) {
+                if (obj.status) {
                     AirCondition.curTemp -= 1;
                     AirConditionScreen.show();
                 }

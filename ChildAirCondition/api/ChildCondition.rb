@@ -6,11 +6,8 @@ include Mongo
 
 before do
     headers 'Access-Control-Allow-Origin' => 'http://localhost:8848',
-            'Access-Control-Allow-Credentials' => 'true'
-end
-
-get '/test' do
-
+            'Access-Control-Allow-Credentials' => 'true',
+            'Content-Type' => 'application/x-www-form-urlencoded'
 end
 
 get '/aircondition' do
@@ -38,8 +35,9 @@ get '/aircondition' do
 end
 
 post '/aircondition' do
+    josn_body = JSON.parse request.body.read, symbolize_names: true
     r = {
-        isOk: true 
+        status: true 
     }
     r.to_json
 end
