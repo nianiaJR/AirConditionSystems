@@ -262,7 +262,7 @@ canvas.onclick = function (event) {
                     WindBox.updateShow(AirCondition.curWind + 1);
                 }
             };
-            xmlhttp.send(params);
+            xmlhttp.send(JSON.stringify(params));
         }
     }
     else if (x >= TempUp.x && y >= TempUp.y && x <= TempUp.x + TempUp.width && y <=  TempUp.y + TempUp.height) {
