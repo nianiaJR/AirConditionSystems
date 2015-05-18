@@ -207,14 +207,19 @@ canvas.onclick = function (event) {
             xmlhttp.onload = function (e) {
                 if (xmlhttp.readyState === 4) {
                     var obj = JSON.parse(xmlhttp.responseText);
-                    AirCondition.defaultTemp = obj.defaultTemp;
-                    AirCondition.defaultWind = obj.defaultWind;
-                    AirCondition.curTemp = AirCondition.curTemp || AirCondition.defaultTemp;
-                    AirCondition.curWind = AirCondition.curWind || AirCondition.defaultWind;
-                    AirConditionScreen.show();
-                    TempBox.updateShow(AirCondition.curTemp);
-                    WindBox.updateShow(AirCondition.curWind);
-                    Switch.isOpen = true;
+                    if (obj.status === 1) {
+                        AirCondition.defaultTemp = obj.defaultTemp;
+                        AirCondition.defaultWind = obj.defaultWind;
+                        AirCondition.curTemp = AirCondition.curTemp || AirCondition.defaultTemp;
+                        AirCondition.curWind = AirCondition.curWind || AirCondition.defaultWind;
+                        AirConditionScreen.show();
+                        TempBox.updateShow(AirCondition.curTemp);
+                        WindBox.updateShow(AirCondition.curWind);
+                        Switch.isOpen = true;
+                    }
+                    else {
+                        alert('中央空调未定义初始参数');
+                    }
                 }
             };
             xmlhttp.send();
