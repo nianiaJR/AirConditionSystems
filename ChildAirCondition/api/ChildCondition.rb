@@ -7,6 +7,7 @@ include Mongo
 before do
     headers 'Access-Control-Allow-Origin' => 'http://localhost:8848',
             'Access-Control-Allow-Credentials' => 'true'
+=begin
     $mongo_client = MongoClient.new("localhost")
     $db = $mongo_client.db('test')
     coll = $db.collection("testCollection")
@@ -23,16 +24,19 @@ before do
     coll.find(name: "mongoDB").to_a.each do |e|
         puts e,">>>>>>>>"
     end
+=end
 end
 
 get '/test' do
-    puts params,">>>>>>>>>>>>"
-    s = TCPSocket.new 'localhost', 2002
-
-    while line = s.gets # Read lines from socket
-      puts line         # and print them
+    s = TCPSocket.new 'localhost', 2000
+    r = {
+        requestTag: 0  
+    }
+    s.write(r.to_json)
+    while response = s.gets # Read lines from socket
+        r = JSON.parse response, symbolize_names: true 
+        puts r,">>>>>>yyyy"
     end
-
     s.close             # close socket when done
 end
 
