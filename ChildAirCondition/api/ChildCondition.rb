@@ -48,8 +48,12 @@ end
 post '/aircondition' do
     json_body = JSON.parse request.body.read, symbolize_names: true
     resp = request_server 1, json_body 
-    r = {
-        status: true 
-    }
+    if resp[:status].equal? 1
+        r = {
+            status: true 
+        }
+    else
+        r = {}
+    end 
     r.to_json
 end
