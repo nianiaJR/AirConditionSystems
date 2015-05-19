@@ -198,7 +198,6 @@ canvas.onclick = function (event) {
 
     // 按键触发http请求
     var xmlhttp = new XMLHttpRequest();
-    var id = AirCondition.id;
 
     // 开关机
     if (x >= Switch.x && y >= Switch.y && x <= Switch.x + Switch.width && y <= Switch.y + Switch.height) {
@@ -212,15 +211,16 @@ canvas.onclick = function (event) {
                 alert('请给出正确的空调ID');
                 return;
             }
-            xmlhttp.open('GET', 'http://localhost:4567/aircondition?id=' + id, false);
+            var queryString = 'id=' + AirCondition.id;
+            xmlhttp.open('GET', 'http://localhost:4567/aircondition?' + queryString, false);
             xmlhttp.onload = function (e) {
                 if (xmlhttp.readyState === 4) {
                     var obj = JSON.parse(xmlhttp.responseText);
                     if (obj.status === 1) {
                         AirCondition.defaultTemp = obj.defaultTemp;
                         AirCondition.defaultWind = obj.defaultWind;
-                        AirCondition.curTemp = AirCondition.curTemp || AirCondition.defaultTemp;
-                        AirCondition.curWind = AirCondition.curWind || AirCondition.defaultWind;
+                        AirCondition.curTemp = AirCondition.defaultTemp;
+                        AirCondition.curWind = AirCondition.defaultWind;
                         AirConditionScreen.show();
                         TempBox.updateShow(AirCondition.curTemp);
                         WindBox.updateShow(AirCondition.curWind);
