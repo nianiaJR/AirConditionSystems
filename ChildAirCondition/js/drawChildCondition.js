@@ -193,7 +193,8 @@ canvas.onclick = function (event) {
     var y = event.pageY - canvas.offsetTop;
     var params = {
         curTemp: AirCondition.curTemp,
-        curWind: AirCondition.curWind
+        curWind: AirCondition.curWind,
+        id: AirCondition.id
     };
 
     // 按键触发http请求
