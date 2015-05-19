@@ -24,20 +24,34 @@ def process_request()
         # 初始参数请求
         when 0
             coll = read_database 'AirConditionConfigure'
-            config = coll[0] 
-            if config.nil?
+            c = coll[0] 
+            if c.nil?
                 r = {
                     status: 0    
                 }
             else
                 r = {
-                    temperature: config['minTemp'],
-                    wind: config['minWind'],
+                    temperature: c['minTemp'],
+                    wind: c['minWind'],
                     status: 1
                 }
             end
         when 1
-
+            coll = read_database 'AirConditionConfigure'
+            c = coll[0]
+            if c.nil?
+                r = {
+                    status: 0 
+                }
+            else
+                f = c['minTemp'] <= request[:curTemp] and\
+                    request[:curTemp] <= c['maxTemp'] and\
+                    c['minWind'] <= request[:curWind] and\
+                    request[:curWind] <= c['maxWind']
+                r = {
+                    status: f ? 1 : 0    
+                } 
+            end
         end
         client.puts r.to_json
         client.close

@@ -13,7 +13,6 @@ helpers do
         r.merge! options
         s.write(r.to_json)
         while line = s.gets # Read lines from socket
-            puts ">>>>>",line, "<<<<<"
             resp = JSON.parse line, symbolize_names: true 
         end
         s.close             # close socket when done
