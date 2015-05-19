@@ -27,7 +27,11 @@ before do
 end
 
 get '/aircondition' do
-    resp = request_server 0
+    $id = params['id']
+    op = {
+        id: $id
+    }
+    resp = request_server 0, op
     if resp[:status].equal? 1
         r = {
             defaultTemp: resp[:temperature].to_i,

@@ -12,6 +12,12 @@ def read_database(collection)
     db.collection(collection).find().to_a
 end
 
+def write_database(collection, tuple)
+    mongo_client = MongoClient.new('localhost')
+    db = mongo_client.db('test')
+    db.collection(collection).insert(tuple)
+end
+
 # 与从控机通信的服务器，专门处理从控机的请求
 def process_request()
     server = TCPServer.new 2000
@@ -35,6 +41,14 @@ def process_request()
                     wind: c['minWind'],
                     status: 1
                 }
+                t = {
+                    time: Time.now,
+                    wind: c['minWind'],
+                    temperature: c['minTemp'],
+                    id: request[:id],
+                    action: 'open'
+                }
+                write_database 'use_records', t
             end
         when 1
             coll = read_database 'AirConditionConfigure'
