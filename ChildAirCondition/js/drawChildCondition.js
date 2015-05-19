@@ -129,6 +129,10 @@ AirCondition.init = function () {
     AirCondition.fillStyle = AirConditionBox.fillStyle;
     AirCondition.fillRect(AirConditionBox.x, AirConditionBox.y,
                           AirConditionBox.width, AirConditionBox.height);
+    // 获取空调的id号
+    var id = location.href.split('?')[1].split('&')[0].split('user_id=')[1];
+    AirCondition.id = id;
+
     // 空调显示屏
     AirCondition.fillStyle = AirConditionScreen.fillShutStyle;
     AirCondition.fillRect(AirConditionScreen.x, AirConditionScreen.y,
@@ -194,6 +198,7 @@ canvas.onclick = function (event) {
 
     // 按键触发http请求
     var xmlhttp = new XMLHttpRequest();
+    var id = AirCondition.id;
 
     // 开关机
     if (x >= Switch.x && y >= Switch.y && x <= Switch.x + Switch.width && y <= Switch.y + Switch.height) {
@@ -203,7 +208,11 @@ canvas.onclick = function (event) {
         }
         else {
             // 从后台获取缺省温度、风速
-            xmlhttp.open('GET', 'http://localhost:4567/aircondition', false);
+            if (AirCondition.id === undefined) {
+                alert('请给出正确的空调ID');
+                return;
+            }
+            xmlhttp.open('GET', 'http://localhost:4567/aircondition?id=' + id, false);
             xmlhttp.onload = function (e) {
                 if (xmlhttp.readyState === 4) {
                     var obj = JSON.parse(xmlhttp.responseText);
