@@ -65,6 +65,17 @@ def process_request()
                 r = {
                     status: f ? 1 : 0    
                 } 
+                
+                if f
+                    t = {
+                        time: Time.now,
+                        wind: request[:curWind],
+                        temperature: request[:curTemp],
+                        id: request[:id],
+                        action: 'change'
+                    } 
+                    write_database 'use_records', t
+                end
             end
         end
         client.puts r.to_json
