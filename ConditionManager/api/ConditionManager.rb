@@ -6,6 +6,7 @@ include Mongo
 
 set :port, 9494
 
+@conditions = {}
 def read_database(collection)
     mongo_client = MongoClient.new('localhost')
     db = mongo_client.db('test')
@@ -49,6 +50,12 @@ def process_request()
                     action: 'open'
                 }
                 write_database 'use_records', t
+
+                # 存取当前服务的空调
+                @conditions[t[:id].to_s] = {
+                    wind: c['minWind'],
+                    temperature: c['minTemp']
+                }
             end
         # 修改参数申请
         when 1
@@ -76,6 +83,12 @@ def process_request()
                         action: 'change'
                     } 
                     write_database 'use_records', t
+
+                    #更新当前服务的空调
+                    @conditions[request[:id].to_s] = {
+                        wind: request[:curWind],
+                        temperature: request[:curTemp]
+                    }
                 end
             end
         # 关机告知
@@ -89,6 +102,8 @@ def process_request()
                 action: 'shut'
             }
             write_database 'use_records', t
+
+            @conditions.delete request[:id].to_s
         end
         client.puts r.to_json
         client.close
