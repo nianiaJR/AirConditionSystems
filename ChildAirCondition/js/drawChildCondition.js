@@ -202,9 +202,22 @@ canvas.onclick = function (event) {
 
     // 开关机
     if (x >= Switch.x && y >= Switch.y && x <= Switch.x + Switch.width && y <= Switch.y + Switch.height) {
+        var queryString = 'id=' + AirCondition.id;
+        // 关机请求
         if (Switch.isOpen) {
-            AirConditionScreen.shut();
-            Switch.isOpen = false;
+            xmlhttp.open('POST', 'http://localhost:4567/airconditionOff?' + queryString, true);
+            xmlhttp.onload = function (e) {
+                if (xmlhttp.readyState === 4) {
+                    var obj = JSON.parse(xmlhttp.responseText);
+                    if (obj.status === 1) {
+                        Switch.isOpen = false;
+                        AirConditionScreen.shut();
+                    }
+                    else {
+                        alert('关机请求失败!');
+                    }
+                }
+            };
         }
         else {
             // 从后台获取缺省温度、风速
@@ -212,8 +225,7 @@ canvas.onclick = function (event) {
                 alert('请给出正确的空调ID');
                 return;
             }
-            var queryString = 'id=' + AirCondition.id;
-            xmlhttp.open('GET', 'http://localhost:4567/aircondition?' + queryString, false);
+            xmlhttp.open('GET', 'http://localhost:4567/airconditionOn?' + queryString);
             xmlhttp.onload = function (e) {
                 if (xmlhttp.readyState === 4) {
                     var obj = JSON.parse(xmlhttp.responseText);
@@ -232,10 +244,11 @@ canvas.onclick = function (event) {
                     }
                 }
             };
-            xmlhttp.send();
         }
+        xmlhttp.send();
     }
     else if (!Switch.isOpen) {
+        alert('请输入正确的房间id!');
         return;
     }
     else if (x >= WindUp.x && y >= WindUp.y && x <= WindUp.x + WindUp.width && y <= WindUp.y + WindUp.height) {

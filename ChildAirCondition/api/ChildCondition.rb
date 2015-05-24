@@ -26,10 +26,9 @@ before do
             'Content-Type' => 'application/x-www-form-urlencoded'
 end
 
-get '/aircondition' do
-    $id = params['id']
+get '/airconditionOn' do
     op = {
-        id: $id
+        id: params['id']
     }
     resp = request_server 0, op
     if resp[:status].equal? 1
@@ -55,5 +54,21 @@ post '/aircondition' do
     else
         r = {}
     end 
+    r.to_json
+end
+
+post '/airconditionOff' do
+    op = {
+        id: params['id'] 
+    } 
+    resp = request_server 2, op 
+    if resp[:status].equal? 1
+        r = {
+            status: 1 
+        }
+    else 
+        r = {}
+    end
+
     r.to_json
 end

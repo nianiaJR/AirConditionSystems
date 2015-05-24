@@ -50,6 +50,7 @@ def process_request()
                 }
                 write_database 'use_records', t
             end
+        # 修改参数申请
         when 1
             coll = read_database 'AirConditionConfigure'
             c = coll[0]
@@ -77,6 +78,17 @@ def process_request()
                     write_database 'use_records', t
                 end
             end
+        # 关机告知
+        when 2
+            r = {
+                status: 1 
+            }
+            t = {
+                time: Time.now,
+                id: request[:id],
+                action: 'shut'
+            }
+            write_database 'use_records', t
         end
         client.puts r.to_json
         client.close
@@ -85,7 +97,3 @@ end
 
 # 新建一个线程，用于并行处理远程的从控机请求
 Thread.new{ process_request() } 
-
-get '/test' do
-    puts ">>>>>>>>>>>>>"
-end
