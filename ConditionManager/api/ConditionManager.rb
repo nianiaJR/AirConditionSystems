@@ -112,3 +112,37 @@ end
 
 # 新建一个线程，用于并行处理远程的从控机请求
 Thread.new{ process_request() } 
+
+before do
+    headers 'Access-Control-Allow-Origin' => 'http://localhost:8888',
+            'Access-Control-Allow-Credentials' => 'true',
+            'Content-Type' => 'application/x-www-form-urlencoded'
+end
+
+get '/airconditionOn' do
+    coll = read_database 'AirConditionConfigure'
+    c = coll[0]
+    if c.nil?
+        resp = {
+            status: 0 
+        } 
+    else
+        resp = {
+            minTemp: c['minTemp'],
+            maxTemp: c['maxTemp'],
+            minWind: c['minWind'],
+            maxWind: c['maxWind'],
+            status: 1 
+        }
+    end
+
+    resp.to_json
+end
+
+post '/airconditionOff' do
+    resp = {
+        status: 1
+    }
+
+    resp.to_json
+end

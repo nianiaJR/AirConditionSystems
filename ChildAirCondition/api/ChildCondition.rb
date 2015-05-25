@@ -72,3 +72,7 @@ post '/airconditionOff' do
 
     r.to_json
 end
+
+delete '/aircondition' do
+    "hello"
+end

@@ -247,10 +247,6 @@ canvas.onclick = function (event) {
         }
         xmlhttp.send();
     }
-    else if (!Switch.isOpen) {
-        alert('请输入正确的房间id!');
-        return;
-    }
     else if (x >= WindUp.x && y >= WindUp.y && x <= WindUp.x + WindUp.width && y <= WindUp.y + WindUp.height) {
         if (AirCondition.curWind + 1 <= 2) {
             WindBox.updateShow(AirCondition.curWind + 1);
