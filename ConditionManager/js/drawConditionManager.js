@@ -9,6 +9,8 @@ var canvas = document.getElementById('condition-manager');
 canvas.width = 1200;
 canvas.height = 1000;
 
+var WindDescrib = ['低', '中', '高'];
+
 var ManagerBox = {
     x: 0,
     y: 0,
@@ -31,8 +33,8 @@ var MinWindBox = {
     y: 40,
     width: 100,
     height: 100,
-    wordX: 1020,
-    wordY: 124,
+    wordX: 70,
+    wordY: 100,
     PictureWidth: 64,
     PictureHeight: 64,
     fillOnStyle: '#66FF66',
@@ -87,17 +89,15 @@ var MaxWindBox = {
     y: 40,
     width: 100,
     height: 100,
-    wordX: 1000,
-    wordY: 270,
+    wordX: 320,
+    wordY: 100,
     PictureWidth: 64,
     PictureHeight: 64,
     fillOnStyle: '#66FF66',
     fillShutStyle: '#000000'
 };
 
-var TempWord = {
-    x: 65,
-    y: 90,
+var Word = {
     fillStyle: '#000000',
     font: '40px Arial'
 };
@@ -125,8 +125,8 @@ var MinTempBox = {
     y: 40,
     width: 100,
     height: 100,
-    wordX: 1000,
-    wordY: 270,
+    wordX: 750,
+    wordY: 100,
     PictureWidth: 64,
     PictureHeight: 64,
     fillOnStyle: '#66FF66',
@@ -163,8 +163,8 @@ var MaxTempBox = {
     y: 40,
     width: 100,
     height: 100,
-    wordX: 1000,
-    wordY: 270,
+    wordX: 1010,
+    wordY: 100,
     PictureWidth: 64,
     PictureHeight: 64,
     fillOnStyle: '#66FF66',
@@ -336,10 +336,10 @@ canvas.onclick = function (event) {
                         Manager.minWind = obj.minWind;
                         Manager.maxWind = obj.maxWind;
                         ManagerScreen.show();
-                        MaxWindBox.updateShow(Manager.curTemp);
-                        MinWindBox.updateShow(Manager.curWind);
-                        MaxTempBox.updateShow(Manager.curTemp);
-                        MinTempBox.updateShow(Manager.curTemp);
+                        MaxWindBox.updateShow(Manager.maxWind);
+                        MinWindBox.updateShow(Manager.minWind);
+                        MaxTempBox.updateShow(Manager.maxTemp);
+                        MinTempBox.updateShow(Manager.minTemp);
                         Switch.isOpen = true;
                     }
                     else {
@@ -350,80 +350,43 @@ canvas.onclick = function (event) {
         }
         xmlhttp.send();
     }
-/*
-    else if (x >= MinWindUp.x && y >= MinWindUp.y && x <= MinWindUp.x + MinWindUp.width && y <= MinWindUp.y + MinWindUp.height) {
-        if (AirCondition.curWind + 1 <= 2) {
-            MinWindBox.updateShow(AirCondition.curWind + 1);
-            params.curWind = AirCondition.curWind + 1;
-            xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
-            xmlhttp.onload = function (e) {
-                var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.status) {
-                    AirCondition.curWind += 1;
-                    AirConditionScreen.show();
-                }
-                else {
-                    MinWindBox.updateShow(AirCondition.curWind - 1);
-                }
-            };
-            xmlhttp.send(JSON.stringify(params));
-        }
+    else if (x >= MinWindUp.x && y >= MinWindUp.y && x <= MinWindUp.x + MinWindUp.width
+            && y <= MinWindUp.y + MinWindUp.height) {
+        debugger;
     }
     else if (x >= MinWindDown.x && y >= MinWindDown.y && x <= MinWindDown.x + MinWindDown.width
              && y <= MinWindDown.y + MinWindDown.height) {
-        if (AirCondition.curWind - 1 >= 0) {
-            MinWindBox.updateShow(AirCondition.curWind - 1);
-            params.curWind = AirCondition.curWind + 1;
-            xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
-            xmlhttp.onload = function (e) {
-                var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.status) {
-                    AirCondition.curWind -= 1;
-                    AirConditionScreen.show();
-                }
-                else {
-                    MinWindBox.updateShow(AirCondition.curWind + 1);
-                }
-            };
-            xmlhttp.send(JSON.stringify(params));
-        }
+        debugger;
+
     }
-    else if (x >= MaxWindUp.x && y >= MaxWindUp.y && x <= MaxWindUp.x + MaxWindUp.width && y <=  MaxWindUp.y + MaxWindUp.height) {
-        if (AirCondition.curTemp + 1 <= 35) {
-            MaxWindBox.updateShow(AirCondition.curTemp + 1);
-            xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
-            xmlhttp.onload = function (e) {
-                var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.status) {
-                    AirCondition.curTemp += 1;
-                    AirConditionScreen.show();
-                }
-                else {
-                    MaxWindBox.updateShow(AirCondition.curWind - 1);
-                }
-            };
-            xmlhttp.send(JSON.stringify(params));
-        }
+    else if (x >= MaxWindUp.x && y >= MaxWindUp.y && x <= MaxWindUp.x + MaxWindUp.width
+             && y <= MaxWindUp.y + MaxWindUp.height) {
+        debugger;
+
     }
     else if (x >= MaxWindDown.x && y >= MaxWindDown.y && x <= MaxWindDown.x + MaxWindDown.width
              && y <= MaxWindDown.y + MaxWindDown.height) {
-        if (AirCondition.curTemp - 1 >= 10) {
-            MaxWindBox.updateShow(AirCondition.curTemp - 1);
-            xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
-            xmlhttp.onload = function (e) {
-                var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.status) {
-                    AirCondition.curTemp -= 1;
-                    AirConditionScreen.show();
-                }
-                else {
-                    MaxWindBox.updateShow(AirCondition.curWind + 1);
-                }
-            };
-            xmlhttp.send(JSON.stringify(params));
-        }
+        debugger;
     }
-    */
+    else if (x >= MinTempUp.x && y >= MinTempUp.y && x <= MinTempUp.x + MinTempUp.width
+             && y <= MinTempUp.y + MinTempUp.height) {
+        debugger;
+    }
+    else if (x >= MinTempDown.x && y >= MinTempDown.y && x <= MinTempDown.x + MinTempDown.width
+             && y <= MinTempDown.y + MinTempDown.height) {
+        debugger;
+
+    }
+    else if (x >= MaxTempUp.x && y >= MaxTempUp.y && x <= MaxTempUp.x + MaxTempUp.width
+             && y <= MaxTempUp.y + MaxTempUp.height) {
+        debugger;
+
+    }
+    else if (x >= MaxTempDown.x && y >= MaxTempDown.y && x <= MaxTempDown.x + MaxTempDown.width
+             && y <= MaxTempDown.y + MaxTempDown.height) {
+        debugger;
+
+    }
 };
 
 ManagerScreen.show = function () {
@@ -445,40 +408,36 @@ ManagerScreen.shut = function () {
 MinWindBox.updateShow = function (wind) {
     Manager.fillStyle = MinWindBox.fillOnStyle;
     Manager.fillRect(MinWindBox.x, MinWindBox.y, MinWindBox.width, MinWindBox.height);
-//   Manager.fillStyle = WindWord.fillStyle;
-//   Manager.font = WindWord.font;
-//    Manager.fillText(WindDescrib[wind], MinWindBox.wordX, MinWindBox.wordY);
+    Manager.fillStyle = Word.fillStyle;
+    Manager.font = Word.font;
+    Manager.fillText(WindDescrib[wind], MinWindBox.wordX, MinWindBox.wordY);
 };
 
-MaxWindBox.updateShow = function (temperature) {
+MaxWindBox.updateShow = function (wind) {
     Manager.fillStyle = MaxWindBox.fillOnStyle;
     Manager.fillRect(MaxWindBox.x, MaxWindBox.y, MaxWindBox.width, MaxWindBox.height);
-    /*
-    Manager.fillStyle = TempWord.fillStyle;
-    Manager.font = TempWord.font;
-    var str = temperature
-        + '℃';
-    Manager.fillText(str, MaxWindBox.wordX, MaxWindBox.wordY);
-    */
+    Manager.fillStyle = Word.fillStyle;
+    Manager.font = Word.font;
+    Manager.fillText(WindDescrib[wind], MaxWindBox.wordX, MaxWindBox.wordY);
 };
 
-MinTempBox.updateShow = function (wind) {
+MinTempBox.updateShow = function (temperature) {
     Manager.fillStyle = MinTempBox.fillOnStyle;
     Manager.fillRect(MinTempBox.x, MinTempBox.y, MinTempBox.width, MinTempBox.height);
-//   Manager.fillStyle = TempWord.fillStyle;
-//   Manager.font = TempWord.font;
-//    Manager.fillText(TempDescrib[wind], MinTempBox.wordX, MinTempBox.wordY);
+    Manager.fillStyle = Word.fillStyle;
+    Manager.font = Word.font;
+    var str = temperature
+            + '℃';
+    Manager.fillText(str, MinTempBox.wordX, MinTempBox.wordY);
 };
 
 MaxTempBox.updateShow = function (temperature) {
     Manager.fillStyle = MaxTempBox.fillOnStyle;
     Manager.fillRect(MaxTempBox.x, MaxTempBox.y, MaxTempBox.width, MaxTempBox.height);
-    /*
-    Manager.fillStyle = TempWord.fillStyle;
-    Manager.font = TempWord.font;
+    Manager.fillStyle = Word.fillStyle;
+    Manager.font = Word.font;
     var str = temperature
-        + '℃';
+            + '℃';
     Manager.fillText(str, MaxTempBox.wordX, MaxTempBox.wordY);
-    */
 };
 

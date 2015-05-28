@@ -369,7 +369,7 @@ TempBox.updateShow = function (temperature) {
     AirCondition.fillStyle = TempWord.fillStyle;
     AirCondition.font = TempWord.font;
     var str = temperature
-        + '℃';
+            + '℃';
     AirCondition.fillText(str, TempBox.wordX, TempBox.wordY);
 };
 
