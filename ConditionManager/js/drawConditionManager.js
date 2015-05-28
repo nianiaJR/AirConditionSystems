@@ -352,40 +352,61 @@ canvas.onclick = function (event) {
     }
     else if (x >= MinWindUp.x && y >= MinWindUp.y && x <= MinWindUp.x + MinWindUp.width
             && y <= MinWindUp.y + MinWindUp.height) {
-        debugger;
+        if (Manager.minWind + 1 <= Manager.maxWind) {
+            Manager.minWind += 1;
+            MinWindBox.updateShow(Manager.minWind);
+        }
     }
     else if (x >= MinWindDown.x && y >= MinWindDown.y && x <= MinWindDown.x + MinWindDown.width
              && y <= MinWindDown.y + MinWindDown.height) {
-        debugger;
-
+        if (Manager.minWind - 1 >= 0) {
+            Manager.minWind -= 1;
+            MinWindBox.updateShow(Manager.minWind);
+        }
     }
     else if (x >= MaxWindUp.x && y >= MaxWindUp.y && x <= MaxWindUp.x + MaxWindUp.width
              && y <= MaxWindUp.y + MaxWindUp.height) {
-        debugger;
-
+        if (Manager.maxWind + 1 <= 2) {
+            Manager.maxWind += 1;
+            MaxWindBox.updateShow(Manager.maxWind);
+        }
     }
     else if (x >= MaxWindDown.x && y >= MaxWindDown.y && x <= MaxWindDown.x + MaxWindDown.width
              && y <= MaxWindDown.y + MaxWindDown.height) {
-        debugger;
+        if (Manager.maxWind - 1 >= Manager.minWind) {
+            Manager.maxWind -= 1;
+            MaxWindBox.updateShow(Manager.maxWind);
+        }
     }
     else if (x >= MinTempUp.x && y >= MinTempUp.y && x <= MinTempUp.x + MinTempUp.width
              && y <= MinTempUp.y + MinTempUp.height) {
-        debugger;
+        if (Manager.minTemp + 1 <= Manager.maxTemp) {
+            Manager.minTemp += 1;
+            MinTempBox.updateShow(Manager.minTemp);
+        }
     }
     else if (x >= MinTempDown.x && y >= MinTempDown.y && x <= MinTempDown.x + MinTempDown.width
              && y <= MinTempDown.y + MinTempDown.height) {
-        debugger;
+        if (Manager.minTemp - 1 >= 0) {
+            Manager.minTemp -= 1;
+            MinTempBox.updateShow(Manager.minTemp);
+        }
 
     }
     else if (x >= MaxTempUp.x && y >= MaxTempUp.y && x <= MaxTempUp.x + MaxTempUp.width
              && y <= MaxTempUp.y + MaxTempUp.height) {
-        debugger;
+        if (Manager.maxTemp + 1 <= 40) {
+            Manager.maxTemp += 1;
+            MaxTempBox.updateShow(Manager.maxTemp);
+        }
 
     }
     else if (x >= MaxTempDown.x && y >= MaxTempDown.y && x <= MaxTempDown.x + MaxTempDown.width
              && y <= MaxTempDown.y + MaxTempDown.height) {
-        debugger;
-
+        if (Manager.maxTemp - 1 >= Manager.minTemp) {
+            Manager.maxTemp -= 1;
+            MaxTempBox.updateShow(Manager.maxTemp);
+        }
     }
 };
 
