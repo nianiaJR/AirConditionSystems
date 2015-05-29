@@ -146,3 +146,12 @@ post '/airconditionOff' do
 
     resp.to_json
 end
+
+post '/configure' do
+    json_body = JSON.parse request.body.read, symbolize_names: true
+    puts '>>>>>>>>>>>',json_body
+    resp = {
+        status: 1 
+    }
+    resp.to_json
+end

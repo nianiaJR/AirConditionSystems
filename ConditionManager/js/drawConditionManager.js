@@ -298,14 +298,10 @@ Manager.init();
 canvas.onclick = function (event) {
     var x = event.pageX - canvas.offsetLeft;
     var y = event.pageY - canvas.offsetTop;
-    var params = {
-        curTemp: Manager.curTemp,
-        curWind: Manager.curWind,
-        id: Manager.id
-    };
 
     // 按键触发http请求
     var xmlhttp = new XMLHttpRequest();
+    var params = {};
 
     // 开关机
     if (x >= Switch.x && y >= Switch.y && x <= Switch.x + Switch.width && y <= Switch.y + Switch.height) {
@@ -353,59 +349,91 @@ canvas.onclick = function (event) {
     else if (x >= MinWindUp.x && y >= MinWindUp.y && x <= MinWindUp.x + MinWindUp.width
             && y <= MinWindUp.y + MinWindUp.height) {
         if (Manager.minWind + 1 <= Manager.maxWind) {
-            Manager.minWind += 1;
-            MinWindBox.updateShow(Manager.minWind);
+            params =  Manager.getConfigure();
+            params.minWind = Manager.minWind + 1;
+            if (Manager.modifyConfigure(params)) {
+                Manager.minWind += 1; 
+                MinWindBox.updateShow(Manager.minWind)
+            }
         }
     }
     else if (x >= MinWindDown.x && y >= MinWindDown.y && x <= MinWindDown.x + MinWindDown.width
              && y <= MinWindDown.y + MinWindDown.height) {
         if (Manager.minWind - 1 >= 0) {
-            Manager.minWind -= 1;
-            MinWindBox.updateShow(Manager.minWind);
+            params = Manager.getConfigure();
+            params.minWind = Manager.minWind - 1;
+            if (Manager.modifyConfigure(params)) {
+                Manager.minWind -= 1;
+                MinWindBox.updateShow(Manager.minWind);
+            }
         }
     }
     else if (x >= MaxWindUp.x && y >= MaxWindUp.y && x <= MaxWindUp.x + MaxWindUp.width
              && y <= MaxWindUp.y + MaxWindUp.height) {
         if (Manager.maxWind + 1 <= 2) {
-            Manager.maxWind += 1;
-            MaxWindBox.updateShow(Manager.maxWind);
+            params =  Manager.getConfigure();
+            params.maxWind = Manager.maxWind + 1;
+            if (Manager.modifyConfigure(params)) {
+                Manager.maxWind += 1; 
+                MaxWindBox.updateShow(Manager.maxWind)
+            }
         }
     }
     else if (x >= MaxWindDown.x && y >= MaxWindDown.y && x <= MaxWindDown.x + MaxWindDown.width
              && y <= MaxWindDown.y + MaxWindDown.height) {
         if (Manager.maxWind - 1 >= Manager.minWind) {
-            Manager.maxWind -= 1;
-            MaxWindBox.updateShow(Manager.maxWind);
+            params =  Manager.getConfigure();
+            params.maxWind = Manager.maxWind - 1;
+            if (Manager.modifyConfigure(params)) {
+                Manager.maxWind -= 1; 
+                MaxWindBox.updateShow(Manager.maxWind)
+            }
         }
     }
     else if (x >= MinTempUp.x && y >= MinTempUp.y && x <= MinTempUp.x + MinTempUp.width
              && y <= MinTempUp.y + MinTempUp.height) {
         if (Manager.minTemp + 1 <= Manager.maxTemp) {
-            Manager.minTemp += 1;
-            MinTempBox.updateShow(Manager.minTemp);
+            params = Manager.getConfigure();
+            params.minTemp = Manager.minTemp + 1;
+            if (Manager.modifyConfigure(params)) {
+                Manager.minTemp += 1;
+                MinTempBox.updateShow(Manager.minTemp);
+            }
         }
     }
     else if (x >= MinTempDown.x && y >= MinTempDown.y && x <= MinTempDown.x + MinTempDown.width
              && y <= MinTempDown.y + MinTempDown.height) {
         if (Manager.minTemp - 1 >= 0) {
-            Manager.minTemp -= 1;
-            MinTempBox.updateShow(Manager.minTemp);
+            params = Manager.getConfigure();
+            params.minTemp = Manager.minTemp - 1;
+            if (Manager.modifyConfigure(params)) {
+                Manager.minTemp -= 1;
+                MinTempBox.updateShow(Manager.minTemp);
+            }
         }
 
     }
     else if (x >= MaxTempUp.x && y >= MaxTempUp.y && x <= MaxTempUp.x + MaxTempUp.width
              && y <= MaxTempUp.y + MaxTempUp.height) {
         if (Manager.maxTemp + 1 <= 40) {
-            Manager.maxTemp += 1;
-            MaxTempBox.updateShow(Manager.maxTemp);
+            params = Manager.getConfigure();
+            params.maxTemp = Manager.maxTemp + 1;
+            if (Manager.modifyConfigure(params)) {
+                Manager.maxTemp += 1;
+                MaxTempBox.updateShow(Manager.maxTemp);
+            }
         }
 
     }
     else if (x >= MaxTempDown.x && y >= MaxTempDown.y && x <= MaxTempDown.x + MaxTempDown.width
              && y <= MaxTempDown.y + MaxTempDown.height) {
         if (Manager.maxTemp - 1 >= Manager.minTemp) {
-            Manager.maxTemp -= 1;
-            MaxTempBox.updateShow(Manager.maxTemp);
+            params = Manager.getConfigure();
+            params.maxTemp = Manager.maxTemp - 1;
+            if (Manager.modifyConfigure(params)) {
+                Manager.maxTemp -= 1;
+                MaxTempBox.updateShow(Manager.maxTemp);
+            }
         }
     }
 };
@@ -462,3 +490,27 @@ MaxTempBox.updateShow = function (temperature) {
     Manager.fillText(str, MaxTempBox.wordX, MaxTempBox.wordY);
 };
 
+Manager.modifyConfigure = function (config) {
+    xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', 'http://localhost:9494/configure', false);
+    xmlhttp.onload = function (e) {
+        if (xmlhttp.readyState === 4) {
+            var obj = JSON.parse(xmlhttp.responseText);
+            if (obj.status === 1) {
+                return true;
+            }
+            return false;
+        }
+    };
+    xmlhttp.send(JSON.stringify(config));
+    return xmlhttp.onload();
+}
+
+Manager.getConfigure = function () {
+    return  {
+        minWind: Manager.minWind,
+        maxWind: Manager.maxWind,
+        minTemp: Manager.minTemp,
+        maxTemp: Manager.maxTemp,
+    }
+}
