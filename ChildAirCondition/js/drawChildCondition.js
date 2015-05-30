@@ -253,13 +253,15 @@ canvas.onclick = function (event) {
             params.curWind = AirCondition.curWind + 1;
             xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
             xmlhttp.onload = function (e) {
-                var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.status) {
-                    AirCondition.curWind += 1;
-                    AirConditionScreen.show();
-                }
-                else {
-                    WindBox.updateShow(AirCondition.curWind - 1);
+                if (xmlhttp.readyState === 4) {
+                    var obj = JSON.parse(xmlhttp.responseText);
+                    if (obj.status) {
+                        AirCondition.curWind += 1;
+                        AirConditionScreen.show();
+                    }
+                    else {
+                        WindBox.updateShow(AirCondition.curWind - 1);
+                    }
                 }
             };
             xmlhttp.send(JSON.stringify(params));
@@ -269,16 +271,18 @@ canvas.onclick = function (event) {
              && y <= WindDown.y + WindDown.height) {
         if (AirCondition.curWind - 1 >= 0) {
             WindBox.updateShow(AirCondition.curWind - 1);
-            params.curWind = AirCondition.curWind + 1;
+            params.curWind = AirCondition.curWind - 1;
             xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
             xmlhttp.onload = function (e) {
-                var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.status) {
-                    AirCondition.curWind -= 1;
-                    AirConditionScreen.show();
-                }
-                else {
-                    WindBox.updateShow(AirCondition.curWind + 1);
+                if (xmlhttp.readyState === 4) {
+                    var obj = JSON.parse(xmlhttp.responseText);
+                    if (obj.status) {
+                        AirCondition.curWind -= 1;
+                        AirConditionScreen.show();
+                    }
+                    else {
+                        WindBox.updateShow(AirCondition.curWind + 1);
+                    }
                 }
             };
             xmlhttp.send(JSON.stringify(params));
@@ -287,15 +291,18 @@ canvas.onclick = function (event) {
     else if (x >= TempUp.x && y >= TempUp.y && x <= TempUp.x + TempUp.width && y <=  TempUp.y + TempUp.height) {
         if (AirCondition.curTemp + 1 <= 35) {
             TempBox.updateShow(AirCondition.curTemp + 1);
+            params.curTemp = AirCondition.curTemp + 1;
             xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
             xmlhttp.onload = function (e) {
-                var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.status) {
-                    AirCondition.curTemp += 1;
-                    AirConditionScreen.show();
-                }
-                else {
-                    TempBox.updateShow(AirCondition.curWind - 1);
+                if (xmlhttp.readyState === 4) {
+                    var obj = JSON.parse(xmlhttp.responseText);
+                    if (obj.status) {
+                        AirCondition.curTemp += 1;
+                        AirConditionScreen.show();
+                    }
+                    else {
+                        TempBox.updateShow(AirCondition.curWind - 1);
+                    }
                 }
             };
             xmlhttp.send(JSON.stringify(params));
@@ -305,15 +312,18 @@ canvas.onclick = function (event) {
              && y <= TempDown.y + TempDown.height) {
         if (AirCondition.curTemp - 1 >= 10) {
             TempBox.updateShow(AirCondition.curTemp - 1);
+            params.curTemp = AirCondition.curTemp - 1;
             xmlhttp.open('POST', 'http://localhost:4567/aircondition', false);
             xmlhttp.onload = function (e) {
-                var obj = JSON.parse(xmlhttp.responseText);
-                if (obj.status) {
-                    AirCondition.curTemp -= 1;
-                    AirConditionScreen.show();
-                }
-                else {
-                    TempBox.updateShow(AirCondition.curWind + 1);
+                if (xmlhttp.readyState === 4) {
+                    var obj = JSON.parse(xmlhttp.responseText);
+                    if (obj.status) {
+                        AirCondition.curTemp -= 1;
+                        AirConditionScreen.show();
+                    }
+                    else {
+                        TempBox.updateShow(AirCondition.curWind + 1);
+                    }
                 }
             };
             xmlhttp.send(JSON.stringify(params));
