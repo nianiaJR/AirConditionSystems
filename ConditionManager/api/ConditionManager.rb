@@ -19,6 +19,14 @@ def write_database(collection, tuple)
     db.collection(collection).insert(tuple)
 end
 
+def update_database(collection, tuple)
+    mongo_client = MongoClient.new('localhost')
+    db = mongo_client.db('test')
+    r = db.collection(collection).find().to_a
+    db.collection(collection).update({'_id' => r[0]['_id']}, tuple)
+    r = db.collection(collection).find().to_a
+end
+
 # 与从控机通信的服务器，专门处理从控机的请求
 def process_request()
     server = TCPServer.new 2000
@@ -89,7 +97,6 @@ def process_request()
                         wind: request[:curWind],
                         temperature: request[:curTemp]
                     }
-                    puts $conditions,'yyyyyyyyy'
                 end
             end
         # 关机告知
@@ -105,6 +112,52 @@ def process_request()
             write_database 'use_records', t
 
             $conditions.delete request[:id].to_s
+        # 检查温度和风速设置是否超过范围
+        when 3
+            coll = read_database 'AirConditionConfigure'
+            c = coll[0]
+            if c.nil?
+                r ={
+                    status: 0 
+                }
+            else
+                r = {
+                    status: 1,
+                    temperature: request[:temperature],
+                    wind: request[:wind]
+                }
+                t = {
+                    time: Time.now,
+                    id: request[:id],
+                    action: 'check',
+                    temperature: request[:temperature],
+                    wind: request[:wind]
+                }
+                if r[:wind] < c['minWind']
+                    r[:wind] = c['minWind']
+                    t[:wind] = c['minWind']
+                    t[:action] = 'upwind'
+                elsif r[:wind] > c['maxWind']
+                    r[:wind] = c['maxWind']
+                    t[:wind] = c['maxWind']
+                    t[:action] = 'downwind'
+                elsif r[:temperature] < c['minTemp']
+                    r[:temperature] = c['minTemp']
+                    t[:temperature] = c['minTemp']
+                    t[:action] = 'uptemperature'
+                elsif r[:temperature] > c['maxTemp']
+                    r[:temperature] = c['maxTemp']
+                    t[:temperature] = c['maxTemp']
+                    t[:action] = 'downtemperature'
+                end
+            end
+            write_database 'use_records', t
+
+            #更新当前服务的空调
+            $conditions[request[:id].to_s] = {
+                wind: r[:wind],
+                temperature: request[:temperature]
+            }
         end
         client.puts r.to_json
         client.close
@@ -146,7 +199,6 @@ get '/airconditions' do
         data.push({
             k => v 
         })
-
     end
     resp = {
         status: 1,
@@ -166,7 +218,7 @@ end
 
 post '/configure' do
     json_body = JSON.parse request.body.read, symbolize_names: true
-    puts '>>>>>>>>>>>',json_body
+    update_database 'AirConditionConfigure', json_body
     resp = {
         status: 1 
     }

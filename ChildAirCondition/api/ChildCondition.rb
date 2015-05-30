@@ -73,6 +73,18 @@ post '/airconditionOff' do
     r.to_json
 end
 
-delete '/aircondition' do
-    "hello"
+post '/airconfigure' do
+    json_body = JSON.parse request.body.read, symbolize_names: true
+    resp = request_server 3, json_body
+    if resp[:status].equal? 1
+        r = {
+            status: 1,
+            temperature: resp[:temperature].to_i,
+            wind: resp[:wind].to_i
+        }
+    else
+        r = {}
+    end
+
+    r.to_json
 end

@@ -195,6 +195,7 @@ var MaxTempDown = {
 var Manager = canvas.getContext('2d');
 
 Manager.init = function () {
+    Manager.hostname = location.hostname;
     Manager.fillStyle = ManagerBox.fillStyle;
     Manager.fillRect(ManagerBox.x, ManagerBox.y,
                     ManagerBox.width, ManagerBox.height);
@@ -310,7 +311,7 @@ canvas.onclick = function (event) {
     if (x >= Switch.x && y >= Switch.y && x <= Switch.x + Switch.width && y <= Switch.y + Switch.height) {
         // 关机请求
         if (Switch.isOpen) {
-            xmlhttp.open('POST', 'http://localhost:9494/airconditionOff', true);
+            xmlhttp.open('POST', 'http://' + Manager.hostname + ':9494/airconditionOff', true);
             xmlhttp.onload = function (e) {
                 if (xmlhttp.readyState === 4) {
                     var obj = JSON.parse(xmlhttp.responseText);
@@ -326,7 +327,7 @@ canvas.onclick = function (event) {
             };
         }
         else {
-            xmlhttp.open('GET', 'http://localhost:9494/airconditionOn');
+            xmlhttp.open('GET', 'http://' + Manager.hostname + ':9494/airconditionOn');
             xmlhttp.onload = function (e) {
                 if (xmlhttp.readyState === 4) {
                     var obj = JSON.parse(xmlhttp.responseText);
@@ -341,7 +342,7 @@ canvas.onclick = function (event) {
                         MaxTempBox.updateShow(Manager.maxTemp);
                         MinTempBox.updateShow(Manager.minTemp);
                         Switch.isOpen = true;
-                        Manager.timer = setInterval(Manager.showScreen, 100);
+                        Manager.timer = setInterval(Manager.showScreen, 1000);
                     }
                     else {
                         alert('中央空调未定义初始参数');
@@ -497,7 +498,7 @@ MaxTempBox.updateShow = function (temperature) {
 
 Manager.modifyConfigure = function (config) {
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('POST', 'http://localhost:9494/configure', false);
+    xmlhttp.open('POST', 'http://' + Manager.hostname + ':9494/configure', false);
     xmlhttp.onload = function (e) {
         if (xmlhttp.readyState === 4) {
             var obj = JSON.parse(xmlhttp.responseText);
@@ -522,7 +523,7 @@ Manager.getConfigure = function () {
 
 Manager.showScreen = function () {
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('GET', 'http://localhost:9494/airconditions');
+    xmlhttp.open('GET', 'http://' + Manager.hostname + ':9494/airconditions');
     xmlhttp.onload = function (e) {
         if (xmlhttp.readyState === 4) {
             var obj = JSON.parse(xmlhttp.responseText);
