@@ -7,10 +7,10 @@ include Mongo
 set :port, 9494
 
 $conditions = {}
-def read_database(collection)
+def read_database(collection, options = {})
     mongo_client = MongoClient.new('localhost')
     db = mongo_client.db('test')
-    db.collection(collection).find().to_a
+    db.collection(collection).find(options).to_a
 end
 
 def write_database(collection, tuple)
@@ -39,10 +39,10 @@ def process_request()
         # 初始参数请求
         when 0
             coll = read_database 'AirConditionConfigure'
-            c = coll[0] 
+            c = coll[0]
             if c.nil?
                 r = {
-                    status: 0    
+                    status: 0 
                 }
             else
                 r = {
@@ -71,7 +71,7 @@ def process_request()
             c = coll[0]
             if c.nil?
                 r = {
-                    status: 0 
+                    status: 0
                 }
             else
                 f = c['minTemp'] <= request[:curTemp] and\
@@ -79,9 +79,9 @@ def process_request()
                     c['minWind'] <= request[:curWind] and\
                     request[:curWind] <= c['maxWind']
                 r = {
-                    status: f ? 1 : 0    
-                } 
-                
+                    status: f ? 1 : 0
+                }
+
                 if f
                     t = {
                         time: Time.now,
@@ -89,7 +89,7 @@ def process_request()
                         temperature: request[:curTemp],
                         id: request[:id],
                         action: 'change'
-                    } 
+                    }
                     write_database 'use_records', t
 
                     #更新当前服务的空调
@@ -102,7 +102,7 @@ def process_request()
         # 关机告知
         when 2
             r = {
-                status: 1 
+                status: 1
             }
             t = {
                 time: Time.now,
@@ -118,7 +118,7 @@ def process_request()
             c = coll[0]
             if c.nil?
                 r ={
-                    status: 0 
+                    status: 0
                 }
             else
                 r = {
@@ -161,11 +161,11 @@ def process_request()
         end
         client.puts r.to_json
         client.close
-    end    
+    end
 end
 
 # 新建一个线程，用于并行处理远程的从控机请求
-Thread.new{ process_request() } 
+Thread.new{ process_request() }
 
 before do
     headers 'Access-Control-Allow-Origin' => 'http://localhost:8888',
@@ -178,15 +178,15 @@ get '/airconditionOn' do
     c = coll[0]
     if c.nil?
         resp = {
-            status: 0 
-        } 
+            status: 0
+        }
     else
         resp = {
             minTemp: c['minTemp'],
             maxTemp: c['maxTemp'],
             minWind: c['minWind'],
             maxWind: c['maxWind'],
-            status: 1 
+            status: 1
         }
     end
 
@@ -197,7 +197,7 @@ get '/airconditions' do
     data = []
     $conditions.map do |k,v|
         data.push({
-            k => v 
+            k => v
         })
     end
     resp = {
@@ -220,7 +220,12 @@ post '/configure' do
     json_body = JSON.parse request.body.read, symbolize_names: true
     update_database 'AirConditionConfigure', json_body
     resp = {
-        status: 1 
+        status: 1
     }
     resp.to_json
+end
+
+get '/cost' do
+    coll = read_database 'use_records', {id: '2'}
+    coll.to_s
 end
