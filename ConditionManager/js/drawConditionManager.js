@@ -2,7 +2,7 @@
 *
 * @file
 *
-* @author Jerry Liang(liangjiarui@baidu.com)
+* @author Jerry Liang(ljracm@gmail.com)
 * Date: 2015-05-25
 */
 var canvas = document.getElementById('condition-manager');
@@ -24,8 +24,16 @@ var ManagerScreen = {
     y: 180,
     width: 1115,
     height: 460,
+    wordX: 100,
+    wordY: 230,
+    lineHeight: 50,
     fillOnStyle: '#66FF66',
     fillShutStyle: '#000000'
+};
+
+var Word = {
+    fillStyle: '#000000',
+    font: '40px Arial'
 };
 
 var MinWindBox = {
@@ -95,11 +103,6 @@ var MaxWindBox = {
     PictureHeight: 64,
     fillOnStyle: '#66FF66',
     fillShutStyle: '#000000'
-};
-
-var Word = {
-    fillStyle: '#000000',
-    font: '40px Arial'
 };
 
 var MaxWindUp = {
@@ -314,6 +317,7 @@ canvas.onclick = function (event) {
                     if (obj.status === 1) {
                         Switch.isOpen = false;
                         ManagerScreen.shut();
+                        clearInterval(Manager.timer);
                     }
                     else {
                         alert('关机请求失败!');
@@ -337,6 +341,7 @@ canvas.onclick = function (event) {
                         MaxTempBox.updateShow(Manager.maxTemp);
                         MinTempBox.updateShow(Manager.minTemp);
                         Switch.isOpen = true;
+                        Manager.timer = setInterval(Manager.showScreen, 100);
                     }
                     else {
                         alert('中央空调未定义初始参数');
@@ -352,8 +357,8 @@ canvas.onclick = function (event) {
             params =  Manager.getConfigure();
             params.minWind = Manager.minWind + 1;
             if (Manager.modifyConfigure(params)) {
-                Manager.minWind += 1; 
-                MinWindBox.updateShow(Manager.minWind)
+                Manager.minWind += 1;
+                MinWindBox.updateShow(Manager.minWind);
             }
         }
     }
@@ -374,8 +379,8 @@ canvas.onclick = function (event) {
             params =  Manager.getConfigure();
             params.maxWind = Manager.maxWind + 1;
             if (Manager.modifyConfigure(params)) {
-                Manager.maxWind += 1; 
-                MaxWindBox.updateShow(Manager.maxWind)
+                Manager.maxWind += 1;
+                MaxWindBox.updateShow(Manager.maxWind);
             }
         }
     }
@@ -385,8 +390,8 @@ canvas.onclick = function (event) {
             params =  Manager.getConfigure();
             params.maxWind = Manager.maxWind - 1;
             if (Manager.modifyConfigure(params)) {
-                Manager.maxWind -= 1; 
-                MaxWindBox.updateShow(Manager.maxWind)
+                Manager.maxWind -= 1;
+                MaxWindBox.updateShow(Manager.maxWind);
             }
         }
     }
@@ -491,7 +496,7 @@ MaxTempBox.updateShow = function (temperature) {
 };
 
 Manager.modifyConfigure = function (config) {
-    xmlhttp = new XMLHttpRequest();
+    var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('POST', 'http://localhost:9494/configure', false);
     xmlhttp.onload = function (e) {
         if (xmlhttp.readyState === 4) {
@@ -504,13 +509,50 @@ Manager.modifyConfigure = function (config) {
     };
     xmlhttp.send(JSON.stringify(config));
     return xmlhttp.onload();
-}
+};
 
 Manager.getConfigure = function () {
     return  {
         minWind: Manager.minWind,
         maxWind: Manager.maxWind,
         minTemp: Manager.minTemp,
-        maxTemp: Manager.maxTemp,
-    }
-}
+        maxTemp: Manager.maxTemp
+    };
+};
+
+Manager.showScreen = function () {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('GET', 'http://localhost:9494/airconditions');
+    xmlhttp.onload = function (e) {
+        if (xmlhttp.readyState === 4) {
+            var obj = JSON.parse(xmlhttp.responseText);
+            if (obj.status === 1) {
+                Manager.fillStyle = ManagerScreen.fillOnStyle;
+                Manager.fillRect(ManagerScreen.x, ManagerScreen.y,
+                                 ManagerScreen.width, ManagerScreen.height);
+                Manager.fillStyle = Word.fillStyle;
+                Manager.font = Word.font;
+                var str = '';
+                for (var i = 0, data = obj.data, len = data.length; i < len; i++) {
+                    for (var key1 in data[i]) {
+                        str = '编号：' + key1;
+                        var dict = data[i][key1];
+                        for (var key2 in dict) {
+                            switch (key2) {
+                                case 'temperature':
+                                    str = str + '     温度：' + dict[key2];
+                                    break;
+                                case 'wind':
+                                    str = str + '     风速：' + WindDescrib[dict[key2]];
+                                    break;
+                            }
+                        }
+                    }
+                    Manager.fillText(str, ManagerScreen.wordX,
+                        ManagerScreen.wordY + ManagerScreen.lineHeight * i);
+                }
+            }
+        }
+    };
+    xmlhttp.send();
+};

@@ -6,7 +6,7 @@ include Mongo
 
 set :port, 9494
 
-@conditions = {}
+$conditions = {}
 def read_database(collection)
     mongo_client = MongoClient.new('localhost')
     db = mongo_client.db('test')
@@ -52,7 +52,7 @@ def process_request()
                 write_database 'use_records', t
 
                 # 存取当前服务的空调
-                @conditions[t[:id].to_s] = {
+                $conditions[t[:id].to_s] = {
                     wind: c['minWind'],
                     temperature: c['minTemp']
                 }
@@ -85,10 +85,11 @@ def process_request()
                     write_database 'use_records', t
 
                     #更新当前服务的空调
-                    @conditions[request[:id].to_s] = {
+                    $conditions[request[:id].to_s] = {
                         wind: request[:curWind],
                         temperature: request[:curTemp]
                     }
+                    puts $conditions,'yyyyyyyyy'
                 end
             end
         # 关机告知
@@ -103,7 +104,7 @@ def process_request()
             }
             write_database 'use_records', t
 
-            @conditions.delete request[:id].to_s
+            $conditions.delete request[:id].to_s
         end
         client.puts r.to_json
         client.close
@@ -135,6 +136,22 @@ get '/airconditionOn' do
             status: 1 
         }
     end
+
+    resp.to_json
+end
+
+get '/airconditions' do
+    data = []
+    $conditions.map do |k,v|
+        data.push({
+            k => v 
+        })
+
+    end
+    resp = {
+        status: 1,
+        data: data
+    }
 
     resp.to_json
 end
