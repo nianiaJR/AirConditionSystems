@@ -126,6 +126,7 @@ var AirCondition = canvas.getContext('2d');
 
 // 空调初始化, 初始化页面布局画布
 AirCondition.init = function () {
+    AirCondition.cost = 0;
     AirCondition.hostname = location.hostname;
     AirCondition.fillStyle = AirConditionBox.fillStyle;
     AirCondition.fillRect(AirConditionBox.x, AirConditionBox.y,
@@ -227,7 +228,7 @@ canvas.onclick = function (event) {
                 alert('请给出正确的空调ID');
                 return;
             }
-            xmlhttp.open('GET', 'http://'+ AirCondition.hostname + ':4567/airconditionOn?' + queryString);
+            xmlhttp.open('GET', 'http://' + AirCondition.hostname + ':4567/airconditionOn?' + queryString);
             xmlhttp.onload = function (e) {
                 if (xmlhttp.readyState === 4) {
                     var obj = JSON.parse(xmlhttp.responseText);
@@ -236,11 +237,13 @@ canvas.onclick = function (event) {
                         AirCondition.defaultWind = obj.defaultWind;
                         AirCondition.curTemp = AirCondition.defaultTemp;
                         AirCondition.curWind = AirCondition.defaultWind;
+                        AirCondition.envTemp = AirCondition.defaultTemp;
                         AirConditionScreen.show();
                         TempBox.updateShow(AirCondition.curTemp);
                         WindBox.updateShow(AirCondition.curWind);
                         Switch.isOpen = true;
                         AirCondition.timer = setInterval(AirCondition.connectManager, 2000);
+                        AirCondition.envTimer = setInterval(AirCondition.changeEnvTemp, 1000 * 60);
                     }
                     else {
                         alert('中央空调未定义初始参数');
@@ -342,9 +345,11 @@ AirConditionScreen.show = function () {
     // 温度显示
     AirCondition.fillStyle = TempWord.fillStyle;
     AirCondition.font = TempWord.font;
-    var str = '制冷温度：'
+    var str = '目标：'
             + AirCondition.curTemp
-            + ' ℃      缺省温度：'
+            + ' ℃      环境：'
+            + AirCondition.envTemp
+            + ' ℃      缺省：'
             + AirCondition.defaultTemp
             + '℃';
     AirCondition.fillText(str, TempWord.x, TempWord.y);
@@ -353,7 +358,7 @@ AirConditionScreen.show = function () {
     AirCondition.font = WindWord.font;
     str = '风速：'
             + WindDescrib[AirCondition.curWind]
-            + '      缺省风速：'
+            + '      缺省：'
             + WindDescrib[AirCondition.defaultWind];
     AirCondition.fillText(str, WindWord.x, WindWord.y);
 };
@@ -407,6 +412,70 @@ AirCondition.connectManager = function () {
                 AirConditionScreen.show();
                 TempBox.updateShow(AirCondition.curTemp);
                 WindBox.updateShow(AirCondition.curWind);
+            }
+        }
+    };
+    xmlhttp.send(JSON.stringify(params));
+};
+
+AirCondition.changeEnvTemp = function () {
+    AirCondition.envTemp = AirCondition.curTemp + Math.floor((Math.random() * 5) + 1);
+    AirConditionScreen.show();
+};
+
+AirCondition.tempControl = function () {
+    if (AirCondition.curTemp !== AirCondition.envTemp ) {
+        switch (AirCondition.curWind) {
+            case 0:
+                if (AirCondition.curTemp > AirCondition.envTemp) {
+                    
+                 }
+        }
+    }
+
+};
+
+// 温度调幅模块
+AirCondition.changeCurTemp = function (delta) {
+    // 保持温度
+    if (AirCondition.curTemp === AirCondition) {
+        AirCondition.computeCost(1);
+        return;
+    }
+    // 如果开启风速比较大，这里需要进行一下特判
+    var absTemp = Math.abs(AirCondition.envTemp - AirCondition.curTemp);
+    if (absTemp <= delta) {
+        AirCondition.computeCost(absTemp);
+        AirCondition.envTemp = AirCondition.curTemp;
+    }
+    else if (AirCondition.envTemp > AirCondition.curTemp) {
+        AirCondition.computeCost(delta);
+        AirCondition.envTemp -= delta;
+    }
+    else if (AirCondition.envTemp < AirCondition.curTemp) {
+        AirCondition.computeCost(delta);
+        AirCondition.envTemp += delta;
+    }
+};
+
+// 计算费用，按温度的降幅来计算费用
+AirCondition.computeCost = function (delta) {
+    // 按每一度温度变化0.1毛钱收费
+    var cost = delta * 0.5;
+    var params = {
+        id: AirCondition.id,
+        cost: cost
+    };
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open('POST', 'http://' + AirCondition.hostname + ':4567/airconditionCost');
+    xmlhttp.onload = function (e) {
+        if(xmlhttp.readyState === 4) {
+            var obj = JSON.parse(xmlhttp.responseText);
+            if (obj.status === 1) {
+                AirCondition.cost += cost;
+            }
+            else {
+                alert('后端计费失败了，你占到便宜了！');
             }
         }
     };

@@ -541,7 +541,7 @@ Manager.showScreen = function () {
                         for (var key2 in dict) {
                             switch (key2) {
                                 case 'temperature':
-                                    str = str + '     温度：' + dict[key2];
+                                    str = str + '     目标：' + dict[key2];
                                     break;
                                 case 'wind':
                                     str = str + '     风速：' + WindDescrib[dict[key2]];
