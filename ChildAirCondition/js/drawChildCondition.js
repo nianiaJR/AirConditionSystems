@@ -47,6 +47,13 @@ var TempWord = {
     font: '40px Arial'
 };
 
+var CostWord = {
+    x: 65,
+    y: 190,
+    fillStyle: '#000000',
+    font: '40px Arial'
+};
+
 var TempUp = {
     x: 1110,
     y: 200,
@@ -207,7 +214,7 @@ canvas.onclick = function (event) {
         var queryString = 'id=' + AirCondition.id;
         // 关机请求
         if (Switch.isOpen) {
-            xmlhttp.open('POST', 'http://'+ AirCondition.hostname + ':4567/airconditionOff?' + queryString, true);
+            xmlhttp.open('POST', 'http://' + AirCondition.hostname + ':4567/airconditionOff?' + queryString, true);
             xmlhttp.onload = function (e) {
                 if (xmlhttp.readyState === 4) {
                     var obj = JSON.parse(xmlhttp.responseText);
@@ -215,6 +222,8 @@ canvas.onclick = function (event) {
                         Switch.isOpen = false;
                         AirConditionScreen.shut();
                         clearInterval(AirCondition.timer);
+                        clearInterval(AirCondition.envTimer);
+                        clearInterval(AirCondition.tempTimer);
                     }
                     else {
                         alert('关机请求失败!');
@@ -244,6 +253,7 @@ canvas.onclick = function (event) {
                         Switch.isOpen = true;
                         AirCondition.timer = setInterval(AirCondition.connectManager, 2000);
                         AirCondition.envTimer = setInterval(AirCondition.changeEnvTemp, 1000 * 60);
+                        AirCondition.tempTimer = setInterval(AirCondition.tempControl, 1000 * 10);
                     }
                     else {
                         alert('中央空调未定义初始参数');
@@ -357,10 +367,15 @@ AirConditionScreen.show = function () {
     AirCondition.fillStyle = WindWord.fillStyle;
     AirCondition.font = WindWord.font;
     str = '风速：'
-            + WindDescrib[AirCondition.curWind]
-            + '      缺省：'
-            + WindDescrib[AirCondition.defaultWind];
+        + WindDescrib[AirCondition.curWind]
+        + '      缺省：'
+        + WindDescrib[AirCondition.defaultWind];
     AirCondition.fillText(str, WindWord.x, WindWord.y);
+
+    str = '当前费用总计：'
+        + AirCondition.cost
+        + ' 元';
+    AirCondition.fillText(str, CostWord.x, CostWord.y);
 };
 
 AirConditionScreen.shut = function () {
@@ -424,22 +439,19 @@ AirCondition.changeEnvTemp = function () {
 };
 
 AirCondition.tempControl = function () {
-    if (AirCondition.curTemp !== AirCondition.envTemp ) {
-        switch (AirCondition.curWind) {
-            case 0:
-                if (AirCondition.curTemp > AirCondition.envTemp) {
-                    
-                 }
-        }
+    if (AirCondition.curTemp === AirCondition.envTemp) {
+        AirCondition.changeCurTemp(AirCondition.wind+1);
     }
-
+    else {
+        AirCondition.changeCurTemp(0.5);
+    }
 };
 
 // 温度调幅模块
 AirCondition.changeCurTemp = function (delta) {
     // 保持温度
     if (AirCondition.curTemp === AirCondition) {
-        AirCondition.computeCost(1);
+        AirCondition.computeCost(delta);
         return;
     }
     // 如果开启风速比较大，这里需要进行一下特判

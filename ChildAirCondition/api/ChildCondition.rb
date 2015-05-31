@@ -100,6 +100,5 @@ post '/airconditionCost' do
         r = {}
     end
     puts "......>>>>>>", json_body
-    
-    {}.to_json
+    r.to_json
 end

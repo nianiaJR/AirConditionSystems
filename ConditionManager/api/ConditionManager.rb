@@ -42,7 +42,7 @@ def process_request()
             c = coll[0]
             if c.nil?
                 r = {
-                    status: 0 
+                    status: 0
                 }
             else
                 r = {
@@ -236,9 +236,4 @@ post '/configure' do
         status: 1
     }
     resp.to_json
-end
-
-get '/cost' do
-    coll = read_database 'use_records', {id: '2'}
-    coll.to_s
 end
