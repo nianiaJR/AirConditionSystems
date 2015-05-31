@@ -158,6 +158,19 @@ def process_request()
                 wind: r[:wind],
                 temperature: request[:temperature]
             }
+        when 4
+            t = {
+                time: Time.now,
+                id: request[:id],
+                cost: request[:cost]
+            }
+            r = {
+                status: 1
+            }
+            write_database 'use_costs', t
+
+            cid = request[:id].to_s
+            $condition[cid].cost = ($condition[cid].cost || 0) + request[:cost]
         end
         client.puts r.to_json
         client.close
