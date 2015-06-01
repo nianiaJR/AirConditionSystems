@@ -92,13 +92,14 @@ end
 post '/airconditionCost' do
     json_body = JSON.parse request.body.read, symbolize_names: true
     resp = request_server 4, json_body
+    puts 'iRooooooo9xxxx>>>>'
     if resp[:status].equal? 1
         r = {
-            status: 1    
+            status: 1 
         }
     else
         r = {}
     end
-    puts "......>>>>>>", json_body
+
     r.to_json
 end

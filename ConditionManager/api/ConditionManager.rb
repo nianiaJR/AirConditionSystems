@@ -170,7 +170,8 @@ def process_request()
             write_database 'use_costs', t
 
             cid = request[:id].to_s
-            $condition[cid].cost = ($condition[cid].cost || 0) + request[:cost]
+            $conditions[cid] = $conditions[cid] || {}
+            $conditions[cid][:cost] = ($conditions[cid][:cost] || 0) + request[:cost]
         end
         client.puts r.to_json
         client.close

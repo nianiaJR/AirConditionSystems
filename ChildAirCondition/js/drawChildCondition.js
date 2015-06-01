@@ -252,8 +252,8 @@ canvas.onclick = function (event) {
                         WindBox.updateShow(AirCondition.curWind);
                         Switch.isOpen = true;
                         AirCondition.timer = setInterval(AirCondition.connectManager, 2000);
-                        AirCondition.envTimer = setInterval(AirCondition.changeEnvTemp, 1000 * 60);
-                        AirCondition.tempTimer = setInterval(AirCondition.tempControl, 1000 * 10);
+                        AirCondition.envTimer = setInterval(AirCondition.changeEnvTemp, 1000 * 20);
+                        AirCondition.tempTimer = setInterval(AirCondition.tempControl, 1000 * 3);
                     }
                     else {
                         alert('中央空调未定义初始参数');
@@ -439,8 +439,8 @@ AirCondition.changeEnvTemp = function () {
 };
 
 AirCondition.tempControl = function () {
-    if (AirCondition.curTemp === AirCondition.envTemp) {
-        AirCondition.changeCurTemp(AirCondition.wind+1);
+    if (AirCondition.curTemp !== AirCondition.envTemp) {
+        AirCondition.changeCurTemp(AirCondition.curWind+1);
     }
     else {
         AirCondition.changeCurTemp(0.5);
@@ -450,7 +450,7 @@ AirCondition.tempControl = function () {
 // 温度调幅模块
 AirCondition.changeCurTemp = function (delta) {
     // 保持温度
-    if (AirCondition.curTemp === AirCondition) {
+    if (AirCondition.curTemp === AirCondition.envTemp) {
         AirCondition.computeCost(delta);
         return;
     }
@@ -473,7 +473,7 @@ AirCondition.changeCurTemp = function (delta) {
 // 计算费用，按温度的降幅来计算费用
 AirCondition.computeCost = function (delta) {
     // 按每一度温度变化0.1毛钱收费
-    var cost = delta * 0.5;
+    var cost = +(delta * 0.1).toFixed(2);
     var params = {
         id: AirCondition.id,
         cost: cost
@@ -481,10 +481,11 @@ AirCondition.computeCost = function (delta) {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('POST', 'http://' + AirCondition.hostname + ':4567/airconditionCost');
     xmlhttp.onload = function (e) {
-        if(xmlhttp.readyState === 4) {
+        if (xmlhttp.readyState === 4) {
             var obj = JSON.parse(xmlhttp.responseText);
             if (obj.status === 1) {
-                AirCondition.cost += cost;
+                AirCondition.cost = +(AirCondition.cost + cost).toFixed(2);
+                AirConditionScreen.show();
             }
             else {
                 alert('后端计费失败了，你占到便宜了！');
