@@ -547,7 +547,8 @@ Manager.showScreen = function () {
                                     str = str + '    风速：' + WindDescrib[dict[key2]];
                                     break;
                                 case 'cost':
-                                    str = str + '    费用: ' + dict[key2];
+                                    str = str + '    费用: ' + dict[key2].toFixed(2);
+                                    break;
                             }
                         }
                     }

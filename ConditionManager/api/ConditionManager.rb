@@ -62,7 +62,8 @@ def process_request()
                 # 存取当前服务的空调
                 $conditions[t[:id].to_s] = {
                     wind: c['minWind'],
-                    temperature: c['minTemp']
+                    temperature: c['minTemp'],
+                    cost: 0
                 }
             end
         # 修改参数申请
@@ -93,10 +94,9 @@ def process_request()
                     write_database 'use_records', t
 
                     #更新当前服务的空调
-                    $conditions[request[:id].to_s] = {
-                        wind: request[:curWind],
-                        temperature: request[:curTemp]
-                    }
+                    id = request[:id].to_s
+                    $conditions[id][:wind] = request[:curWind]
+                    $conditions[id][:temperature] = request[:curTemp]
                 end
             end
         # 关机告知
@@ -111,7 +111,7 @@ def process_request()
             }
             write_database 'use_records', t
 
-            $conditions.delete request[:id].to_s
+            # $conditions.delete request[:id].to_s
         # 检查温度和风速设置是否超过范围
         when 3
             coll = read_database 'AirConditionConfigure'
@@ -154,10 +154,9 @@ def process_request()
             write_database 'use_records', t
 
             #更新当前服务的空调
-            $conditions[request[:id].to_s] = {
-                wind: r[:wind],
-                temperature: request[:temperature]
-            }
+            id = request[:id].to_s
+            $conditions[id][:wind] = request[:wind]
+            $conditions[id][:temperature] = request[:temperature]
         when 4
             t = {
                 time: Time.now,
