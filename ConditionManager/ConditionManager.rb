@@ -2,6 +2,7 @@ require 'sinatra'
 require 'json'
 require 'mongo'
 require 'socket'
+require 'haml'
 include Mongo
 
 set :port, 9494
@@ -180,11 +181,13 @@ end
 # 新建一个线程，用于并行处理远程的从控机请求
 Thread.new{ process_request() }
 
+=begin
 before do
     headers 'Access-Control-Allow-Origin' => 'http://localhost:8888',
             'Access-Control-Allow-Credentials' => 'true',
             'Content-Type' => 'application/x-www-form-urlencoded'
 end
+=end
 
 get '/airconditionOn' do
     coll = read_database 'AirConditionConfigure'
@@ -236,4 +239,8 @@ post '/configure' do
         status: 1
     }
     resp.to_json
+end
+
+get '/host' do
+    haml :index
 end

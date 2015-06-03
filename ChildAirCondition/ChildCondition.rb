@@ -2,28 +2,24 @@ require 'sinatra'
 require 'json'
 require 'mongo'
 require 'socket'
+require 'haml'
 include Mongo
+
 
 helpers do
     def request_server(tag, options = {})
         s = TCPSocket.new 'localhost', 2000
         r = {
-            requestTag: tag  
+            requestTag: tag
         }
         r.merge! options
         s.write(r.to_json)
         while line = s.gets # Read lines from socket
-            resp = JSON.parse line, symbolize_names: true 
+            resp = JSON.parse line, symbolize_names: true
         end
         s.close             # close socket when done
         resp
     end
-end
-
-before do
-    headers 'Access-Control-Allow-Origin' => 'http://localhost:8848',
-            'Access-Control-Allow-Credentials' => 'true',
-            'Content-Type' => 'application/x-www-form-urlencoded'
 end
 
 get '/airconditionOn' do
@@ -92,7 +88,6 @@ end
 post '/airconditionCost' do
     json_body = JSON.parse request.body.read, symbolize_names: true
     resp = request_server 4, json_body
-    puts 'iRooooooo9xxxx>>>>'
     if resp[:status].equal? 1
         r = {
             status: 1 
@@ -102,4 +97,8 @@ post '/airconditionCost' do
     end
 
     r.to_json
+end
+
+get '/room' do
+    haml :index
 end
