@@ -16,7 +16,7 @@ var ManagerBox = {
     y: 0,
     width: 1200,
     height: 800,
-    fillStyle: '#FF0000'
+    fillStyle: '#D0D0D0'
 };
 
 var ManagerScreen = {
@@ -27,7 +27,7 @@ var ManagerScreen = {
     wordX: 100,
     wordY: 230,
     lineHeight: 50,
-    fillOnStyle: '#66FF66',
+    fillOnStyle: '#33CCCC',
     fillShutStyle: '#000000'
 };
 
@@ -45,7 +45,7 @@ var MinWindBox = {
     wordY: 100,
     PictureWidth: 64,
     PictureHeight: 64,
-    fillOnStyle: '#66FF66',
+    fillOnStyle: '#33CCCC',
     fillShutStyle: '#000000'
 };
 
@@ -101,7 +101,7 @@ var MaxWindBox = {
     wordY: 100,
     PictureWidth: 64,
     PictureHeight: 64,
-    fillOnStyle: '#66FF66',
+    fillOnStyle: '#33CCCC',
     fillShutStyle: '#000000'
 };
 
@@ -132,7 +132,7 @@ var MinTempBox = {
     wordY: 100,
     PictureWidth: 64,
     PictureHeight: 64,
-    fillOnStyle: '#66FF66',
+    fillOnStyle: '#33CCCC',
     fillShutStyle: '#000000'
 };
 
@@ -170,7 +170,7 @@ var MaxTempBox = {
     wordY: 100,
     PictureWidth: 64,
     PictureHeight: 64,
-    fillOnStyle: '#66FF66',
+    fillOnStyle: '#33CCCC',
     fillShutStyle: '#000000'
 };
 

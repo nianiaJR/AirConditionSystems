@@ -15,7 +15,7 @@ var AirConditionBox = {
     y: 0,
     width: 1200,
     height: 800,
-    fillStyle: '#FF0000'
+    fillStyle: '#D0D0D0'
 };
 
 var AirConditionScreen = {
@@ -23,7 +23,7 @@ var AirConditionScreen = {
     y: 50,
     width: 900,
     height: 600,
-    fillOnStyle: '#66FF66',
+    fillOnStyle: '#33CCCC',
     fillShutStyle: '#000000'
 };
 
@@ -36,7 +36,7 @@ var TempBox = {
     wordY: 270,
     PictureWidth: 64,
     PictureHeight: 64,
-    fillOnStyle: '#66FF66',
+    fillOnStyle: '#33CCCC',
     fillShutStyle: '#000000'
 };
 
@@ -81,7 +81,7 @@ var WindBox = {
     wordY: 124,
     PictureWidth: 64,
     PictureHeight: 64,
-    fillOnStyle: '#66FF66',
+    fillOnStyle: '#33CCCC',
     fillShutStyle: '#000000'
 };
 
