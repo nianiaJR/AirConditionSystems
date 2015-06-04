@@ -119,6 +119,7 @@ var Switch = {
     PictureHeight: 128
 };
 
+/*
 var CheckIn = {
     x: 50,
     y: 670,
@@ -127,6 +128,7 @@ var CheckIn = {
     PictureWidth: 128,
     PictureHeight: 128
 };
+*/
 
 // 空调外壳画布
 var AirCondition = canvas.getContext('2d');
@@ -186,6 +188,8 @@ AirCondition.init = function () {
         AirCondition.drawImage(SwitchImg, 0, 0, Switch.PictureWidth, Switch.PictureHeight,
                                Switch.x, Switch.y, Switch.width, Switch.height);
     };
+
+/*
     // 费用查询
     var CheckInImg = document.createElement('img');
     CheckInImg.src = 'asset/checkin.png';
@@ -193,6 +197,7 @@ AirCondition.init = function () {
         AirCondition.drawImage(CheckInImg, 0, 0, CheckIn.PictureWidth, CheckIn.PictureHeight,
                                CheckIn.x, CheckIn.y, CheckIn.width, CheckIn.height);
     };
+*/
 };
 
 AirCondition.init();
@@ -440,7 +445,7 @@ AirCondition.changeEnvTemp = function () {
 
 AirCondition.tempControl = function () {
     if (AirCondition.curTemp !== AirCondition.envTemp) {
-        AirCondition.changeCurTemp(AirCondition.curWind+1);
+        AirCondition.changeCurTemp(AirCondition.curWind + 1);
     }
     else {
         AirCondition.changeCurTemp(0.5);

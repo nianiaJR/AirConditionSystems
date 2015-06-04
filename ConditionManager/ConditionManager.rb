@@ -244,3 +244,7 @@ end
 get '/host' do
     haml :index
 end
+
+get '/query' do
+    haml :query
+end
